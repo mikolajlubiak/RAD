@@ -18,7 +18,7 @@ void IRAM_ATTR countPulse() {
   counts++;
 }
 
-void sendData(unsigned long cpm);
+bool sendData(unsigned long cpm);
 
 void setup() {
   Serial.begin(115200);
@@ -75,17 +75,21 @@ void loop() {
     counts = 0;
     interrupts();
 
-    sendData(pulseCount);
+    if (!sendData(pulseCount)) {
+      noInterrupts();
+      counts += pulseCount; // Restore data if posting failed
+      interrupts();
+    }
   }
 
   delay(5);
 }
 
-void sendData(unsigned long pulseCount) {
+bool sendData(unsigned long pulseCount) {
   if (WiFi.status() != WL_CONNECTED) {
     Serial.println("WiFi not connected");
     digitalWrite(BUILTIN_LED, HIGH);
-    return;
+    return false;
   }
 
   WiFiClientSecure client;
@@ -94,7 +98,7 @@ void sendData(unsigned long pulseCount) {
 
   if (!http.begin(client, API_URL)) {
     Serial.println("HTTP begin failed");
-    return;
+    return false;
   }
 
   http.addHeader("Content-Type", "application/json");
@@ -109,9 +113,13 @@ void sendData(unsigned long pulseCount) {
 
   Serial.printf("Sending %lu clicks\n", pulseCount);
 
+  bool success = false;
   int httpCode = http.POST(json);
   if (httpCode > 0) {
     Serial.printf("POST -> %d\n", httpCode);
+    if (httpCode == 200 || httpCode == 201) {
+      success = true;
+    }
   } else {
     Serial.printf("POST failed: %s\n", http.errorToString(httpCode).c_str());
     digitalWrite(BUILTIN_LED, HIGH);
@@ -119,7 +127,10 @@ void sendData(unsigned long pulseCount) {
 
   http.end();
 
-  digitalWrite(BUILTIN_LED, LOW);
-  delay(50);
-  digitalWrite(BUILTIN_LED, HIGH);
+  if (success) {
+    digitalWrite(BUILTIN_LED, LOW);
+    delay(50);
+    digitalWrite(BUILTIN_LED, HIGH);
+  }
+  return success;
 }

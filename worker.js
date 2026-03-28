@@ -17,7 +17,7 @@ export default {
       }
 
       const now = Date.now();
-      const ts = (typeof body.ts === "number" && body.ts > 1e12) ? body.ts : now;
+      const ts = now; // Enforce server-side timestamp
       const clicks = body.clicks || 0;
 
       await env.RAD_KV.put("latest", JSON.stringify({ clicks, ts, receivedAt: now }));
@@ -39,7 +39,7 @@ export default {
 
       let totalClicks = 0;
       try {
-        const since = Date.now() - 300_000;
+        const since = Date.now() - 3600_000; // Average over 1 hour
         const query = await env.RAD_D1.prepare(
           "SELECT SUM(clicks) AS s FROM readings WHERE ts >= ?;"
         ).bind(since).all();
@@ -51,7 +51,7 @@ export default {
       const POST_INTERVAL_MS = Number(env.POST_INTERVAL_MS) || 300000;
       const CPM_TO_USV = Number(env.CPM_TO_USV) || 0.0018;
 
-      const cpmValue = totalClicks / (POST_INTERVAL_MS / 60000);
+      const cpmValue = totalClicks / 60; // 60 minutes in 1 hour
       const avg_usv = cpmValue * CPM_TO_USV;
 
       const cpm_from_latest = latest ? latest.clicks / (POST_INTERVAL_MS / 60000) : 0;
@@ -71,7 +71,12 @@ export default {
           offline,
           lastSeenAgo: diffMs,
         }),
-        { headers: { "Content-Type": "application/json" } }
+        { 
+          headers: { 
+            "Content-Type": "application/json",
+            "Cache-Control": "public, max-age=60"
+          } 
+        }
       );
     }
 
@@ -101,12 +106,18 @@ export default {
         }));
 
         return new Response(JSON.stringify({ data }), {
-          headers: { "Content-Type": "application/json" },
+          headers: { 
+            "Content-Type": "application/json",
+            "Cache-Control": "public, max-age=60"
+          },
         });
       } catch (e) {
         console.error(e);
         return new Response(JSON.stringify({ data: [] }), {
-          headers: { "Content-Type": "application/json" },
+          headers: { 
+            "Content-Type": "application/json",
+            "Cache-Control": "public, max-age=60"
+          },
         });
       }
     }
@@ -451,6 +462,7 @@ document.addEventListener("DOMContentLoaded", () => {
     currentLang = langs[(i + 1) % langs.length];
     applyLang(currentLang);
   };
+  document.getElementById("range").addEventListener("change", fetchHistory);
 });
 </script>
 
