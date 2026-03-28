@@ -1,9 +1,16 @@
-export default {
-  async fetch(request, env) {
-    const url = new URL(request.url);
+const JSON_HEADERS = { 
+  "Content-Type": "application/json",
+  "Cache-Control": "public, max-age=60"
+};
 
+function getConfig(env) {
+  return {
+    intervalMs: Number(env.POST_INTERVAL_MS) || 300000,
+    cpmToUsv: Number(env.CPM_TO_USV) || 0.0018
+  };
+}
 
-    if (request.method === "POST" && url.pathname === "/ingest") {
+async function handleIngest(request, env) {
       const auth = request.headers.get("Authorization") || "";
       if (auth !== `Bearer ${env.DEVICE_TOKEN}`) {
         return new Response("Unauthorized", { status: 401 });
@@ -30,10 +37,10 @@ export default {
         console.error("D1 insert error", e);
       }
 
-      return new Response("OK");
-    }
+  return new Response("OK");
+}
 
-    if (request.method === "GET" && url.pathname === "/latest") {
+async function handleLatest(env) {
       const latestRaw = await env.RAD_KV.get("latest");
       const latest = latestRaw ? JSON.parse(latestRaw) : null;
 
@@ -48,14 +55,13 @@ export default {
         console.error("D1 query error", e);
       }
 
-      const POST_INTERVAL_MS = Number(env.POST_INTERVAL_MS) || 300000;
-      const CPM_TO_USV = Number(env.CPM_TO_USV) || 0.0018;
+      const cfg = getConfig(env);
 
       const cpmValue = totalClicks / 60; // 60 minutes in 1 hour
-      const avg_usv = cpmValue * CPM_TO_USV;
+      const avg_usv = cpmValue * cfg.cpmToUsv;
 
-      const cpm_from_latest = latest ? latest.clicks / (POST_INTERVAL_MS / 60000) : 0;
-      const instant_usv = cpm_from_latest * CPM_TO_USV;
+      const cpm_from_latest = latest ? latest.clicks / (cfg.intervalMs / 60000) : 0;
+      const instant_usv = cpm_from_latest * cfg.cpmToUsv;
 
       const lastUpdate = latest?.receivedAt || 0;
       const diffMs = Date.now() - lastUpdate;
@@ -71,17 +77,11 @@ export default {
           offline,
           lastSeenAgo: diffMs,
         }),
-        { 
-          headers: { 
-            "Content-Type": "application/json",
-            "Cache-Control": "public, max-age=60"
-          } 
-        }
+        { headers: JSON_HEADERS }
       );
-    }
+}
 
-
-    if (request.method === "GET" && url.pathname === "/history") {
+async function handleHistory(url, env) {
       const w = url.searchParams.get("window") || "1hr";
       const windows = {
         "1hr": 60 * 60e3,
@@ -97,33 +97,21 @@ export default {
           "SELECT ts, clicks FROM readings WHERE ts >= ? ORDER BY ts ASC;"
         ).bind(since).all();
 
-        const POST_INTERVAL_MS = Number(env.POST_INTERVAL_MS) || 300000;
-        const CPM_TO_USV = Number(env.CPM_TO_USV) || 0.0018;
+        const cfg = getConfig(env);
 
         const data = rows.results.map(r => ({
           ts: r.ts,
-          usv: (r.clicks / (POST_INTERVAL_MS / 60000)) * CPM_TO_USV,
+          usv: (r.clicks / (cfg.intervalMs / 60000)) * cfg.cpmToUsv,
         }));
 
-        return new Response(JSON.stringify({ data }), {
-          headers: { 
-            "Content-Type": "application/json",
-            "Cache-Control": "public, max-age=60"
-          },
-        });
+        return new Response(JSON.stringify({ data }), { headers: JSON_HEADERS });
       } catch (e) {
         console.error(e);
-        return new Response(JSON.stringify({ data: [] }), {
-          headers: { 
-            "Content-Type": "application/json",
-            "Cache-Control": "public, max-age=60"
-          },
-        });
+        return new Response(JSON.stringify({ data: [] }), { headers: JSON_HEADERS });
       }
-    }
+}
 
-
-    if (request.method === "GET" && (url.pathname === "/" || url.pathname === "/index.html")) {
+async function handleIndex() {
       return new Response(
         `<!DOCTYPE html>
 <html lang="en">
@@ -473,6 +461,23 @@ document.addEventListener("DOMContentLoaded", () => {
 </html>`,
         { headers: { "Content-Type": "text/html" } }
       );
+}
+
+export default {
+  async fetch(request, env) {
+    const url = new URL(request.url);
+
+    if (request.method === "POST" && url.pathname === "/ingest") {
+      return handleIngest(request, env);
+    }
+    if (request.method === "GET" && url.pathname === "/latest") {
+      return handleLatest(env);
+    }
+    if (request.method === "GET" && url.pathname === "/history") {
+      return handleHistory(url, env);
+    }
+    if (request.method === "GET" && (url.pathname === "/" || url.pathname === "/index.html")) {
+      return handleIndex();
     }
 
     return new Response("Not found", { status: 404 });

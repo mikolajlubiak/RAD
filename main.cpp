@@ -2,15 +2,20 @@
 #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
 #include <ArduinoJson.h>
+#include <cstdint>
 #include <time.h>
 #include <ArduinoOTA.h>
 
-const char* WIFI_SSID     = "yes"; // wifi name
-const char* WIFI_PASSWORD = "no"; // wifi pass
-const char* API_URL       = "https://rad.changeme.workers.dev/ingest";  // <-- change changeme
-const char* DEVICE_TOKEN  = "xxx";  // secret
+constexpr const char* WIFI_SSID     = "yes"; // wifi name
+constexpr const char* WIFI_4PASSWORD = "no"; // wifi pass
+constexpr const char* API_URL       = "https://rad.changeme.workers.dev/ingest";  // <-- change changeme
+constexpr const char* DEVICE_TOKEN  = "xxx";  // secret
 
-#define GEIGER_PIN D5
+constexpr uint8_t GEIGER_PIN = D5;
+constexpr unsigned long SEND_INTERVAL_MS = 300000;
+constexpr unsigned long WIFI_TIMEOUT_MS = 300;
+constexpr unsigned long LOOP_DELAY_MS = 5;
+constexpr unsigned long SERIAL_BAUD = 115200;
 
 volatile unsigned long counts = 0;
 
@@ -21,16 +26,17 @@ void IRAM_ATTR countPulse() {
 bool sendData(unsigned long cpm);
 
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(SERIAL_BAUD);
   pinMode(BUILTIN_LED, OUTPUT);
   pinMode(GEIGER_PIN, INPUT_PULLUP);
   attachInterrupt(digitalPinToInterrupt(GEIGER_PIN), countPulse, FALLING);
 
   WiFi.mode(WIFI_STA);
+  WiFi.setAutoReconnect(true);
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
   Serial.print("WiFi...");
   while (WiFi.status() != WL_CONNECTED) {
-    delay(300);
+    delay(WIFI_TIMEOUT_MS);
     Serial.print(".");
   }
   Serial.println("Connected!");
@@ -67,7 +73,7 @@ void loop() {
   static unsigned long lastSend = 0;
   unsigned long now = millis();
 
-  if (now - lastSend >= 300000) {
+  if (now - lastSend >= SEND_INTERVAL_MS) {
     lastSend = now;
 
     noInterrupts();
@@ -82,7 +88,7 @@ void loop() {
     }
   }
 
-  delay(5);
+  delay(LOOP_DELAY_MS);
 }
 
 bool sendData(unsigned long pulseCount) {
