@@ -792,7 +792,6 @@ const INDEX_HTML = `<!DOCTYPE html>
     });
     updateChartTheme();
 
-    // Historical data fetch.
     fetchHistory();
     setInterval(fetchHistory, 300000);
   });
