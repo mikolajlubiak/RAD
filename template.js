@@ -3,7 +3,7 @@ const INDEX_HTML = `<!DOCTYPE html>
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://rad.icmt.cc https://cloudflareinsights.com; img-src 'self' data: https://icmt.cc;">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://*.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://rad.icmt.cc https://*.cloudflareinsights.com; img-src 'self' data: https://icmt.cc;">
 <title>OSMR - Ostrołęcki System Monitorowania Radiacyjnego</title>
 <meta name="description" content="OSMR - niezależna stacja pomiarowa promieniowania jonizującego w Ostrołęce. Dane na żywo, wykresy historyczne i alerty. Część inicjatywy Smart City.">
 <link rel="icon" type="image/png" href="https://icmt.cc/p/rad-the-local-radiaton-website/favicon_hu_dc0b661d74b90e4d.png" />
@@ -12,6 +12,7 @@ const INDEX_HTML = `<!DOCTYPE html>
 <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" as="style">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"></noscript>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js" defer></script>
 
 <style>
   :root {
@@ -740,15 +741,11 @@ const INDEX_HTML = `<!DOCTYPE html>
     fetchLatest();
     setInterval(fetchLatest, 30000);
 
-    const {
-      Chart, LineController, LineElement, PointElement,
-      CategoryScale, LinearScale, Filler, Tooltip
-    } = await import("https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.esm.js");
-
-    Chart.register(
-      LineController, LineElement, PointElement,
-      CategoryScale, LinearScale, Filler, Tooltip
-    );
+    // Chart.js UMD build is already registered if we use the full bundle.
+    if (typeof Chart === 'undefined') {
+      console.error("Chart.js not loaded. Verify CDN connectivity.");
+      return;
+    }
 
     ctx = document.getElementById("chart").getContext("2d");
     const gradient = ctx.createLinearGradient(0, 0, 0, 300);
