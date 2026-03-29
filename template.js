@@ -23,7 +23,7 @@ const INDEX_HTML = `<!DOCTYPE html>
     --accent-hover: #1d4ed8;
     --accent-light: #eff6ff;
     --text: #0f172a;
-    --text-muted: #64748b;
+    --text-muted: #475569;
     --border: #e2e8f0;
     
     /* Status Colors */
@@ -326,7 +326,7 @@ const INDEX_HTML = `<!DOCTYPE html>
 </head>
 <body>
 
-<div class="container">
+<div class="container" role="main">
   
   <!-- Header -->
   <header class="app-header animate-fade">
@@ -380,7 +380,7 @@ const INDEX_HTML = `<!DOCTYPE html>
   <div class="card animate-fade delay-2">
     <div class="chart-header">
       <h2 class="chart-title" data-i18n="trendLabel">Trend Zmian</h2>
-      <select id="range">
+      <select id="range" aria-label="Zakres czasowy">
         <option value="1hr" selected data-i18n="range1h">Ostatnia 1 godzina</option>
         <option value="12hr" data-i18n="range12h">Ostatnie 12 godzin</option>
         <option value="1day" data-i18n="range1d">Ostatnia 1 doba</option>
@@ -502,6 +502,7 @@ const INDEX_HTML = `<!DOCTYPE html>
       range35d: "Ostatnie 35 dni",
       range70d: "Ostatnie 70 dni",
       range140d: "Ostatnie 140 dni",
+      rangePeriodLabel: "Zakres czasowy",
       notifyOn: "🔔 Powiadomienia: Wł",
       notifyOff: "🔔 Powiadomienia: Wył",
       offline: "Brak łączności z bazą od",
@@ -549,6 +550,7 @@ const INDEX_HTML = `<!DOCTYPE html>
       range35d: "Last 35 days",
       range70d: "Last 70 days",
       range140d: "Last 140 days",
+      rangePeriodLabel: "Time range",
       notifyOn: "🔔 Notify: On",
       notifyOff: "🔔 Notify: Off",
       offline: "Station offline for",
@@ -723,6 +725,7 @@ const INDEX_HTML = `<!DOCTYPE html>
 
     const isDark = document.documentElement.classList.contains('dark');
     document.getElementById("themeToggle").textContent = isDark ? (t.themeLight || translations["pl"].themeLight) : (t.themeDark || translations["pl"].themeDark);
+    document.getElementById("range").setAttribute("aria-label", t.rangePeriodLabel || translations["pl"].rangePeriodLabel);
   };
 
   document.addEventListener("DOMContentLoaded", () => {
