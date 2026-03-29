@@ -282,10 +282,6 @@ export function renderIndex() {
     </div>
   </div>
 
-  <footer class="animate-fade delay-4">
-    Autorski system na ESP8266 — <a href="https://icmt.cc/p/rad-the-local-radiaton-website/" target="_blank" data-i18n="more">Szczegóły Inżynieryjne Tutaj</a>
-  </footer>
-
 </div>
 
 <script>
