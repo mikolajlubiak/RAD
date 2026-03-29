@@ -5,7 +5,7 @@ const INDEX_HTML = `<!DOCTYPE html>
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://rad.icmt.cc https://cloudflareinsights.com; img-src 'self' data: https://icmt.cc;">
 <title>OSMR - Ostrołęcki System Monitorowania Radiacyjnego</title>
-<meta name="description" content="OSMR – niezależna stacja pomiarowa promieniowania jonizującego w Ostrołęce. Dane na żywo, wykresy historyczne i alerty. Część inicjatywy Smart City.">
+<meta name="description" content="OSMR - niezależna stacja pomiarowa promieniowania jonizującego w Ostrołęce. Dane na żywo, wykresy historyczne i alerty. Część inicjatywy Smart City.">
 <link rel="icon" type="image/png" href="https://icmt.cc/p/rad-the-local-radiaton-website/favicon_hu_dc0b661d74b90e4d.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -317,7 +317,7 @@ const INDEX_HTML = `<!DOCTYPE html>
     <div class="header-left">
       <div class="header-logo">OSMR</div>
       <div>
-        <div class="subtitle" data-i18n="subtitle">Panel Inteligentnego Miasta &bull; Ostrołęka</div>
+        <div class="subtitle" data-i18n="subtitle">Panel Inteligentnego Miasta | Ostrołęka</div>
         <h1 id="mainTitle" data-i18n="title">Ostrołęcki System Monitorowania Radiacyjnego</h1>
       </div>
     </div>
@@ -440,7 +440,7 @@ const INDEX_HTML = `<!DOCTYPE html>
   let chart = null;
   const offlineEl = document.getElementById("offline");
 
-  // Init theme ASAP (before DOMContentLoaded) to prevent flash of wrong theme.
+  // Init theme early to avoid flicker.
   if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
     document.documentElement.classList.add('dark');
   }
@@ -460,7 +460,7 @@ const INDEX_HTML = `<!DOCTYPE html>
   const translations = {
     pl: {
       title: "Ostrołęcki System Monitorowania Radiacyjnego",
-      subtitle: "Panel Inteligentnego Miasta &bull; Ostrołęka",
+      subtitle: "Panel Inteligentnego Miasta | Ostrołęka",
       instantLabel: "Odczyt Bieżący",
       avgLabel: "Średnia (1h)",
       cpmLabel: "CPM:",
@@ -489,11 +489,11 @@ const INDEX_HTML = `<!DOCTYPE html>
       bgTitle: "Czym jest Promieniowanie Tła?",
       bgDesc: "Naturalne promieniowanie przestrzeni w Ostrołęce i na całym Mazowszu zazwyczaj znajduje się w granicach <strong>0.10 - 0.25 µSv/h</strong> (mikrosiwertów na godzinę). Pochodzi ono bezpośrednio z kosmosu oraz naturalnych pierwiastków obecnych w środowisku. Granice te to <strong>część całkowicie zdrowej normy</strong>, stąd dorywcze wahania nawet w okolice 0.40 µSv nie powinny być powodem do niepokoju.",
       benefitsTitle: "Korzyści dla Inicjatywy Inteligentnego Miasta",
-      benefitsIntro: "Inwestycja i zaangażowanie miasta w już istniejącą, solidną lokalną infrastrukturę otwiera szerokie pole korzyści społecznych dla Miasta i Obywateli:",
-      benefit1: "<strong>Pionierstwo Wizerunkowe:</strong> <span class='desc'>Bezkonkurencyjnie wznosi Ostrołękę w poczet projektów 'Inteligentnego Miasta' dzięki udostępnianiu danych na żywo.</span>",
-      benefit2: "<strong>Edukacja Ekologiczna:</strong> <span class='desc'>Łatwa i błyskawiczna weryfikacja danych z niezależnego źródła buduje spokój ducha (szczególnie istotne obok Elektrowni).</span>",
-      benefit3: "<strong>Narzędzie Sztabu Kryzysowego:</strong> <span class='desc'>Nasz nowoczesny system pozwala na udostępnienie dedykowanego interfejsu programistycznego (API) dla miejskich systemów powiadamiania.</span>",
-      benefit4: "<strong>Edukacja W Szkole:</strong> <span class='desc'>Otwarty dostęp do archiwum wykresów to znakomite, realne narządzie analityczne dla uczniów lokalnych techników i liceów uczących się fizyki i matematyki.</span>",
+      benefitsIntro: "Inwestycja i zaangażowanie miasta w istniejącą infrastrukturę to konkretne korzyści dla Ostrołęki i jej mieszkańców:",
+      benefit1: "<strong>Wizerunek Miasta:</strong> <span class='desc'>Promuje Ostrołękę jako nowoczesne miasto stawiające na jawność i otwarte dane środowiskowe.</span>",
+      benefit2: "<strong>Edukacja Mieszkańców:</strong> <span class='desc'>Szybka weryfikacja danych z niezależnego źródła daje mieszkańcom poczucie bezpieczeństwa i spokój ducha.</span>",
+      benefit3: "<strong>Wsparcie Kryzysowe:</strong> <span class='desc'>System oferuje API, które można łatwo zintegrować z lokalnymi systemami ostrzegania i powiadamiania.</span>",
+      benefit4: "<strong>Dane dla Edukacji:</strong> <span class='desc'>Archiwum pomiarów to świetne narzędzie dla uczniów lokalnych szkół do nauki fizyki i analizy danych na realnych przykładach.</span>",
       partnerTitle: "Możliwość Partnerstwa Regionalnego",
       partnerDesc: "Zaufanie i ciągłość wdrażania technologii to klucz sukcesu nowoczesnego miasta. Czekamy na kontakt z oficjalnymi wydziałami Urzędu Miasta.",
       partnerHerb: "HERB",
@@ -508,7 +508,7 @@ const INDEX_HTML = `<!DOCTYPE html>
     },
     en: {
       title: "Ostrołęka Radiation Monitoring System",
-      subtitle: "Smart City Dashboard &bull; Ostrołęka",
+      subtitle: "Smart City Dashboard | Ostrołęka",
       instantLabel: "Current Reading",
       avgLabel: "Average (1h)",
       cpmLabel: "CPM:",
@@ -537,11 +537,11 @@ const INDEX_HTML = `<!DOCTYPE html>
       bgTitle: "What is Background Radiation?",
       bgDesc: "Natural background radiation in Ostrołęka and the entire Mazovia region usually stays within <strong>0.10 - 0.25 µSv/h</strong> (microsieverts per hour). It comes directly from space and natural elements present in the environment. These levels are <strong>part of a completely healthy norm</strong>, so occasional fluctuations even around 0.40 µSv should not be a cause for concern.",
       benefitsTitle: "Benefits for the Smart City Initiative",
-      benefitsIntro: "Investment and city engagement in existing, robust local infrastructure opens a wide field of social benefits for the City and its Citizens:",
-      benefit1: "<strong>Image Pioneering:</strong> <span class='desc'>Unrivaled elevation of Ostrołęka into the ranks of 'Smart City' projects through the provision of live data.</span>",
-      benefit2: "<strong>Ecological Education:</strong> <span class='desc'>Easy and instant verification of data from an independent source builds peace of mind (especially important near the Power Plant).</span>",
-      benefit3: "<strong>Crisis Management Tool:</strong> <span class='desc'>Our modern framework allows for a dedicated integration (API) into city-wide notification systems.</span>",
-      benefit4: "<strong>School Education:</strong> <span class='desc'>Open access to the chart archive is an excellent, real analytical tool for students of local technical and high schools learning physics and mathematics.</span>",
+      benefitsIntro: "City investment in existing infrastructure provides tangible benefits for Ostrołęka and its citizens:",
+      benefit1: "<strong>City Image:</strong> <span class='desc'>Promotes Ostrołęka as a modern city committed to transparency and open environmental data.</span>",
+      benefit2: "<strong>Citizen Awareness:</strong> <span class='desc'>Quick verification from an independent source builds trust and provides peace of mind for residents.</span>",
+      benefit3: "<strong>Crisis Support:</strong> <span class='desc'>The system provides an API that can be easily integrated with local emergency notification tools.</span>",
+      benefit4: "<strong>Educational Data:</strong> <span class='desc'>The measurement archive is a great resource for local students to learn data analysis and physics.</span>",
       partnerTitle: "Regional Partnership Opportunity",
       partnerDesc: "Trust and continuity in technology implementation are keys to the success of a modern city. We look forward to contacting official departments of the City Hall.",
       partnerHerb: "COAT OF ARMS",
@@ -676,7 +676,7 @@ const INDEX_HTML = `<!DOCTYPE html>
       const key = el.getAttribute("data-i18n");
       const val = t[key] || translations["pl"][key];
       if (val) {
-        // Use innerHTML for keys that contain HTML tags or entities
+        // Support HTML/entities in keys.
         if (val.includes("<") || val.includes("&")) {
           el.innerHTML = val;
         } else {
@@ -792,7 +792,7 @@ const INDEX_HTML = `<!DOCTYPE html>
     });
     updateChartTheme();
 
-    // ── 5. Historical chart data — runs after chart exists ────────────────────
+    // Historical data fetch.
     fetchHistory();
     setInterval(fetchHistory, 300000);
   });
