@@ -150,10 +150,11 @@ const INDEX_HTML = `<!DOCTYPE html>
   .kpi-unit { font-size: 1rem; font-weight: 600; color: var(--text-muted); }
   .kpi-meta { font-size: 0.85rem; color: var(--text-muted); margin-top: 0.5rem; display: flex; align-items: center; gap: 0.25rem;}
 
-  .status-legend { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 1rem; }
+  .status-legend { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem; margin-top: 1rem; }
   .badge {
-    padding: 0.35rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; 
-    border: 1px solid var(--border); display: flex; align-items: center; gap: 0.35rem; color: var(--text-muted);
+    padding: 0.35rem 0.5rem; border-radius: 9999px; font-size: 0.72rem; font-weight: 600; 
+    border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; gap: 0.35rem; color: var(--text-muted);
+    white-space: nowrap;
   }
   .badge-dot { width: 8px; height: 8px; border-radius: 50%; }
 
@@ -343,7 +344,7 @@ const INDEX_HTML = `<!DOCTYPE html>
         <div class="kpi-unit">µSv/h</div>
       </div>
       <div class="kpi-meta">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        <span>☢</span>
         <span data-i18n="cpmLabel">CPM:</span> <strong id="cpm">--</strong>
       </div>
     </div>
@@ -388,7 +389,7 @@ const INDEX_HTML = `<!DOCTYPE html>
     <p data-i18n="aboutDesc"><strong>OSMR (Ostrołęcki System Monitorowania Radiacyjnego)</strong> to niezależna i w pełni funkcjonalna stacja pomiarowa działająca w Ostrołęce <strong>nieprzerwanie od ponad 3 lat</strong>. Jej celem jest całodobowe dostarczanie otwartych danych środowiskowych o poziomie promieniowania jonizującego w naszym mieście.</p>
     
     <h2 style="margin-top: 1.5rem;" data-i18n="bgTitle">Czym jest Promieniowanie Tła?</h2>
-    <p data-i18n="bgDesc">Naturalne promieniowanie przestrzeni w Ostrołęce i na całym Mazowszu zazwyczaj znajduje się w granicach <strong>0.10 - 0.25 µSv/h</strong> (mikrosiwertów na godzinę). Pochodzi ono bezpośrednio z kosmosu oraz naturalnych pierwiastków obecnych w środowisku. Granice te to <strong>część całkowicie zdrowej normy</strong>, stąd dorywcze wahania nawet w okolice 0.40 µSv nie powinny być powodem do niepokoju.</p>
+    <p data-i18n="bgDesc">Naturalne promieniowanie przestrzeni w Ostrołęce i na całym Mazowszu zazwyczaj znajduje się w granicach <strong>0.1 - 0.2 µSv/h</strong> (mikrosiwertów na godzinę). Pochodzi ono bezpośrednio z kosmosu oraz naturalnych pierwiastków obecnych w środowisku. Granice te to <strong>część całkowicie zdrowej normy</strong>, stąd dorywcze wahania nawet w okolice 0.3 µSv nie powinny być powodem do niepokoju.</p>
     
     <h2 style="margin-top: 1.5rem;" data-i18n="benefitsTitle">Po co to robimy?</h2>
     <p data-i18n="benefitsIntro">Chcemy, aby dostęp do rzetelnych danych o naszym środowisku był prosty i darmowy dla każdego:</p>
@@ -404,7 +405,7 @@ const INDEX_HTML = `<!DOCTYPE html>
       <p style="margin-bottom: 1.25rem;" data-i18n="partnerDesc">Wierzymy, że takie inicjatywy najlepiej działają przy wsparciu lokalnej społeczności i samorządu. Zapraszamy do kontaktu.</p>
       
       <div style="padding: 1rem 1.5rem; border: 1px solid var(--border); border-radius: 8px; background: var(--card); font-weight: 600; color: var(--text); display: inline-flex; align-items: center; justify-content: center; gap: 1rem; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05); text-align: left; line-height: 1.2;">
-        <div style="width: 40px; height: 48px; background: #fef08a; border: 2px solid #eab308; border-radius: 4px; display:flex; align-items:center; justify-content:center; color: #854d0e; font-size:10px; font-weight: bold; flex-shrink: 0;" title="Herb Ostrołęki" data-i18n="partnerHerb">HERB</div>
+        <div style="width: 64px; min-height: 48px; background: #fef08a; border: 2px solid #eab308; border-radius: 6px; display:flex; align-items:center; justify-content:center; text-align: center; color: #854d0e; font-size: 10px; font-weight: 800; flex-shrink: 0; line-height: 1.1; padding: 4px; box-sizing: border-box;" title="Herb Ostrołęki" data-i18n="partnerHerb">HERB</div>
         <div>
           <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.2rem;" data-i18n="partnerVis">Nasza wizja współpracy</div>
           <div style="font-size: 1rem;" data-i18n="partnerSupport">Projekt może być wspierany przez Urząd Miasta Ostrołęki</div>
@@ -491,7 +492,7 @@ const INDEX_HTML = `<!DOCTYPE html>
       aboutTitle: "O projekcie",
       aboutDesc: "<strong>OSMR (Ostrołęcki System Monitorowania Radiacyjnego)</strong> to niezależna i w pełni funkcjonalna stacja pomiarowa działająca w Ostrołęce <strong>nieprzerwanie od ponad 3 lat</strong>. Jej celem jest całodobowe dostarczanie otwartych danych środowiskowych o poziomie promieniowania jonizującego w naszym mieście.",
       bgTitle: "Czym jest Promieniowanie Tła?",
-      bgDesc: "Naturalne promieniowanie przestrzeni w Ostrołęce i na całym Mazowszu zazwyczaj znajduje się w granicach <strong>0.10 - 0.25 µSv/h</strong> (mikrosiwertów na godzinę). Pochodzi ono bezpośrednio z kosmosu oraz naturalnych pierwiastków obecnych w środowisku. Granice te to <strong>część całkowicie zdrowej normy</strong>, stąd dorywcze wahania nawet w okolice 0.40 µSv nie powinny być powodem do niepokoju.",
+      bgDesc: "Naturalne promieniowanie przestrzeni w Ostrołęce i na całym Mazowszu zazwyczaj znajduje się w granicach <strong>0.1 - 0.2 µSv/h</strong> (mikrosiwertów na godzinę). Pochodzi ono bezpośrednio z kosmosu oraz naturalnych pierwiastków obecnych w środowisku. Granice te to <strong>część całkowicie zdrowej normy</strong>, stąd dorywcze wahania nawet w okolice 0.3 µSv nie powinny być powodem do niepokoju.",
       benefitsTitle: "Po co to robimy?",
       benefitsIntro: "Chcemy, aby dostęp do rzetelnych danych o naszym środowisku był prosty i darmowy dla każdego:",
       benefit1: "<strong>Transparentność:</strong> <span class='desc'>Pokazujemy, że Ostrołęka może mieć własne, otwarte źródła danych o środowisku.</span>",
@@ -539,7 +540,7 @@ const INDEX_HTML = `<!DOCTYPE html>
       aboutTitle: "About the Project",
       aboutDesc: "<strong>OSMR (Ostrołęka Radiation Monitoring System)</strong> is an independent and fully functional measuring station operating in Ostrołęka <strong>continuously for over 3 years</strong>. Its goal is to provide 24/7 open environmental data on the level of ionizing radiation in our city.",
       bgTitle: "What is Background Radiation?",
-      bgDesc: "Natural background radiation in Ostrołęka and the entire Mazovia region usually stays within <strong>0.10 - 0.25 µSv/h</strong> (microsieverts per hour). It comes directly from space and natural elements present in the environment. These levels are <strong>part of a completely healthy norm</strong>, so occasional fluctuations even around 0.40 µSv should not be a cause for concern.",
+      bgDesc: "Natural background radiation in Ostrołęka and the entire Mazovia region usually stays within <strong>0.1 - 0.2 µSv/h</strong> (microsieverts per hour). It comes directly from space and natural elements present in the environment. These levels are <strong>part of a completely healthy norm</strong>, so occasional fluctuations even around 0.3 µSv should not be a cause for concern.",
       benefitsTitle: "Why we do this",
       benefitsIntro: "We want to provide everyone with free and easy access to local environmental data:",
       benefit1: "<strong>Transparency:</strong> <span class='desc'>Showing that Ostrołęka can have its own open environmental data sources.</span>",
@@ -608,11 +609,14 @@ const INDEX_HTML = `<!DOCTYPE html>
 
       instantEl.style.color = instantColor;
       animateValue(instantEl, lastInstant, d.instant_usv, 800);
-      animateValue(avgEl,     lastAvg,     d.avg_usv,     800);
-      animateValue(cpmEl,     lastCpm,     d.cpm,         800);
-
       lastInstant = d.instant_usv;
-      lastAvg     = d.avg_usv;
+
+      const currentRange = document.getElementById("range").value;
+      if (currentRange === "1hr") {
+        animateValue(avgEl, lastAvg, d.avg_usv, 800);
+        lastAvg = d.avg_usv;
+      }
+      animateValue(cpmEl, lastCpm, d.cpm, 800);
       lastCpm     = d.cpm;
 
       if (d.offline) {
@@ -659,6 +663,24 @@ const INDEX_HTML = `<!DOCTYPE html>
         return t.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
       });
       const chartData = d.data.map((row) => row.usv);
+      
+      const avgUsv = chartData.length > 0 ? chartData.reduce((a, b) => a + b, 0) / chartData.length : 0;
+      const avgEl = document.getElementById("avg");
+      const t = translations[currentLang] || translations["pl"];
+      const rangeEl = document.getElementById("range");
+      const selectedOptionText = rangeEl.options[rangeEl.selectedIndex].textContent;
+      
+      // Update Average Value with animation
+      animateValue(avgEl, lastAvg, avgUsv, 800);
+      lastAvg = avgUsv;
+
+      // Update Label to reflect range (e.g. "Ostatnie 24h")
+      const labelEl = document.querySelector('[data-i18n="avgLabel"]');
+      if (labelEl) {
+        const base = t.avgLabel.split('(')[0].trim();
+        const suffix = w === "1hr" ? "1h" : w.replace("hr", "h").replace("day", "d");
+        labelEl.textContent = base + " (" + suffix + ")";
+      }
 
       requestAnimationFrame(() => {
         chart.data.labels = labels;
@@ -680,8 +702,11 @@ const INDEX_HTML = `<!DOCTYPE html>
       const key = el.getAttribute("data-i18n");
       const val = t[key] || translations["pl"][key];
       if (val) {
-        // Support HTML/entities in keys.
-        if (val.includes("<") || val.includes("&")) {
+        if (key === "avgLabel") {
+          const w = document.getElementById("range").value;
+          const suffix = w === "1hr" ? "1h" : w.replace("hr", "h").replace("day", "d");
+          el.textContent = val.split('(')[0].trim() + " (" + suffix + ")";
+        } else if (val.includes("<") || val.includes("&")) {
           el.innerHTML = val;
         } else {
           el.textContent = val;
