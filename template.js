@@ -317,7 +317,7 @@ const INDEX_HTML = `<!DOCTYPE html>
     <div class="header-left">
       <div class="header-logo">OSMR</div>
       <div>
-        <div class="subtitle" data-i18n="subtitle">Panel Inteligentnego Miasta | Ostrołęka</div>
+        <div class="subtitle" data-i18n="subtitle">Niezależny monitoring dla mieszkańców Ostrołęki</div>
         <h1 id="mainTitle" data-i18n="title">Ostrołęcki System Monitorowania Radiacyjnego</h1>
       </div>
     </div>
@@ -386,8 +386,8 @@ const INDEX_HTML = `<!DOCTYPE html>
     <h2 style="margin-top: 1.5rem;" data-i18n="bgTitle">Czym jest Promieniowanie Tła?</h2>
     <p data-i18n="bgDesc">Naturalne promieniowanie przestrzeni w Ostrołęce i na całym Mazowszu zazwyczaj znajduje się w granicach <strong>0.10 - 0.25 µSv/h</strong> (mikrosiwertów na godzinę). Pochodzi ono bezpośrednio z kosmosu oraz naturalnych pierwiastków obecnych w środowisku. Granice te to <strong>część całkowicie zdrowej normy</strong>, stąd dorywcze wahania nawet w okolice 0.40 µSv nie powinny być powodem do niepokoju.</p>
     
-    <h2 style="margin-top: 1.5rem;" data-i18n="benefitsTitle">Korzyści dla Inicjatywy Smart City</h2>
-    <p data-i18n="benefitsIntro">Inwestycja i zaangażowanie miasta w już istniejącą, solidną lokalną infrastrukturę otwiera szerokie pole korzyści społecznych dla Miasta i Obywateli:</p>
+    <h2 style="margin-top: 1.5rem;" data-i18n="benefitsTitle">Po co to robimy?</h2>
+    <p data-i18n="benefitsIntro">Chcemy, aby dostęp do rzetelnych danych o naszym środowisku był prosty i darmowy dla każdego:</p>
     <ul class="benefits-list">
       <li><div class="benefits-item-content" data-i18n="benefit1"></div></li>
       <li><div class="benefits-item-content" data-i18n="benefit2"></div></li>
@@ -396,20 +396,20 @@ const INDEX_HTML = `<!DOCTYPE html>
     </ul>
 
     <div class="partner-box">
-      <h3 data-i18n="partnerTitle">Możliwość Partnerstwa Regionalnego</h3>
-      <p style="margin-bottom: 1.25rem;" data-i18n="partnerDesc">Zaufanie i ciągłość wdrażania technologii to klucz sukcesu nowoczesnego miasta. Czekamy na kontakt z oficjalnymi wydziałami Urzędu Miasta.</p>
+      <h3 data-i18n="partnerTitle">Współpraca lokalna</h3>
+      <p style="margin-bottom: 1.25rem;" data-i18n="partnerDesc">Wierzymy, że takie inicjatywy najlepiej działają przy wsparciu lokalnej społeczności i samorządu. Zapraszamy do kontaktu.</p>
       
       <div style="padding: 1rem 1.5rem; border: 1px solid var(--border); border-radius: 8px; background: var(--card); font-weight: 600; color: var(--text); display: inline-flex; align-items: center; justify-content: center; gap: 1rem; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05); text-align: left; line-height: 1.2;">
         <div style="width: 40px; height: 48px; background: #fef08a; border: 2px solid #eab308; border-radius: 4px; display:flex; align-items:center; justify-content:center; color: #854d0e; font-size:10px; font-weight: bold; flex-shrink: 0;" title="Herb Ostrołęki" data-i18n="partnerHerb">HERB</div>
         <div>
-          <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.2rem;" data-i18n="partnerVis">Wizualizacja Partnerstwa</div>
-          <div style="font-size: 1rem;" data-i18n="partnerSupport">Projekt wspierany przez Urząd Miasta Ostrołęki</div>
+          <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.2rem;" data-i18n="partnerVis">Nasza wizja współpracy</div>
+          <div style="font-size: 1rem;" data-i18n="partnerSupport">Projekt może być wspierany przez Urząd Miasta Ostrołęki</div>
         </div>
       </div>
     </div>
 
     <div class="disclaimer">
-      <strong data-i18n="disclaimerTitle">Kwestia Atestacji Metodologicznej:</strong> <span data-i18n="disclaimerText">System korzysta z profesjonalnych tub Geigera-Müllera zdolnych monitorować promieniowanie na bieżąco, wykonując kalibracje do stałego CPM. Podkreślamy, że oficjalnym instytucjonalnym organem Państwowym do wysyłania ogólnokrajowych, ewakuacyjnych alertów kryzysowych prawnie pozostaje zawsze PAA.</span>
+      <strong data-i18n="disclaimerTitle">Warto wiedzieć:</strong> <span data-i18n="disclaimerText">Choć używamy profesjonalnego sprzętu i dbamy o kalibrację, pamiętaj: jedynym oficjalnym źródłem alertów kryzysowych w Polsce pozostaje PAA.</span>
     </div>
 
     <footer class="creator-footer animate-fade delay-4">
@@ -421,7 +421,7 @@ const INDEX_HTML = `<!DOCTYPE html>
       <div class="creator-card">
         <div class="creator-name" data-i18n="creator2Name">Mikołaj Lubiak</div>
         <a href="mailto:lubiak@proton.me" class="creator-contact">lubiak@proton.me</a>
-        <div class="creator-desc" data-i18n="creator2Desc">Senior software engineering i cybersecurity specialist. Odświeżył branding z naciskiem na Ostrołękę, przebudował stronę oraz worker i usprawnił firmware.</div>
+        <div class="creator-desc" data-i18n="creator2Desc">Inżynier oprogramowania i pasjonat bezpieczeństwa. Zadbał o to, żeby strona była szybka, a dane rzetelnie przetwarzane.</div>
         <div class="nip-info">NIP: 5253065759</div>
       </div>
     </footer>
@@ -460,7 +460,7 @@ const INDEX_HTML = `<!DOCTYPE html>
   const translations = {
     pl: {
       title: "Ostrołęcki System Monitorowania Radiacyjnego",
-      subtitle: "Panel Inteligentnego Miasta | Ostrołęka",
+      subtitle: "Niezależny monitoring dla mieszkańców Ostrołęki",
       instantLabel: "Odczyt Bieżący",
       avgLabel: "Średnia (1h)",
       cpmLabel: "CPM:",
@@ -488,27 +488,27 @@ const INDEX_HTML = `<!DOCTYPE html>
       aboutDesc: "<strong>OSMR (Ostrołęcki System Monitorowania Radiacyjnego)</strong> to niezależna i w pełni funkcjonalna stacja pomiarowa działająca w Ostrołęce <strong>nieprzerwanie od ponad 3 lat</strong>. Jej celem jest całodobowe dostarczanie otwartych danych środowiskowych o poziomie promieniowania jonizującego w naszym mieście.",
       bgTitle: "Czym jest Promieniowanie Tła?",
       bgDesc: "Naturalne promieniowanie przestrzeni w Ostrołęce i na całym Mazowszu zazwyczaj znajduje się w granicach <strong>0.10 - 0.25 µSv/h</strong> (mikrosiwertów na godzinę). Pochodzi ono bezpośrednio z kosmosu oraz naturalnych pierwiastków obecnych w środowisku. Granice te to <strong>część całkowicie zdrowej normy</strong>, stąd dorywcze wahania nawet w okolice 0.40 µSv nie powinny być powodem do niepokoju.",
-      benefitsTitle: "Korzyści dla Inicjatywy Inteligentnego Miasta",
-      benefitsIntro: "Inwestycja i zaangażowanie miasta w istniejącą infrastrukturę to konkretne korzyści dla Ostrołęki i jej mieszkańców:",
-      benefit1: "<strong>Wizerunek Miasta:</strong> <span class='desc'>Promuje Ostrołękę jako nowoczesne miasto stawiające na jawność i otwarte dane środowiskowe.</span>",
-      benefit2: "<strong>Edukacja Mieszkańców:</strong> <span class='desc'>Szybka weryfikacja danych z niezależnego źródła daje mieszkańcom poczucie bezpieczeństwa i spokój ducha.</span>",
-      benefit3: "<strong>Wsparcie Kryzysowe:</strong> <span class='desc'>System oferuje API, które można łatwo zintegrować z lokalnymi systemami ostrzegania i powiadamiania.</span>",
-      benefit4: "<strong>Dane dla Edukacji:</strong> <span class='desc'>Archiwum pomiarów to świetne narzędzie dla uczniów lokalnych szkół do nauki fizyki i analizy danych na realnych przykładach.</span>",
-      partnerTitle: "Możliwość Partnerstwa Regionalnego",
-      partnerDesc: "Zaufanie i ciągłość wdrażania technologii to klucz sukcesu nowoczesnego miasta. Czekamy na kontakt z oficjalnymi wydziałami Urzędu Miasta.",
+      benefitsTitle: "Po co to robimy?",
+      benefitsIntro: "Chcemy, aby dostęp do rzetelnych danych o naszym środowisku był prosty i darmowy dla każdego:",
+      benefit1: "<strong>Transparentność:</strong> <span class='desc'>Pokazujemy, że Ostrołęka może mieć własne, otwarte źródła danych o środowisku.</span>",
+      benefit2: "<strong>Spokój i wiedza:</strong> <span class='desc'>Gdy w sieci pojawiają się plotki, u nas sprawdzisz faktyczny stan promieniowania w Twojej okolicy.</span>",
+      benefit3: "<strong>Gotowość:</strong> <span class='desc'>Nasze dane można łatwo podpiąć pod lokalne systemy ostrzegania (udostępniamy API).</span>",
+      benefit4: "<strong>Dla uczniów:</strong> <span class='desc'>Udostępniamy archiwa nauczycielom i uczniom do realnych doświadczeń na lekcjach fizyki.</span>",
+      partnerTitle: "Współpraca lokalna",
+      partnerDesc: "Wierzymy, że takie inicjatywy najlepiej działają przy wsparciu lokalnej społeczności i samorządu. Zapraszamy do kontaktu.",
       partnerHerb: "HERB",
-      partnerVis: "Wizualizacja Partnerstwa",
-      partnerSupport: "Projekt wspierany przez Urząd Miasta Ostrołęki",
-      disclaimerTitle: "Kwestia Atestacji Metodologicznej:",
-      disclaimerText: "System korzysta z profesjonalnych tub Geigera-Müllera zdolnych monitorować promieniowanie na bieżąco, wykonując kalibracje do stałego CPM. Podkreślamy, że oficjalnym instytucjonalnym organem Państwowym do wysyłania ogólnokrajowych, ewakuacyjnych alertów kryzysowych prawnie pozostaje zawsze PAA.",
+      partnerVis: "Nasza wizja współpracy",
+      partnerSupport: "Projekt może być wspierany przez Urząd Miasta Ostrołęki",
+      disclaimerTitle: "Warto wiedzieć:",
+      disclaimerText: "Choć używamy profesjonalnego sprzętu i dbamy o kalibrację, pamiętaj: jedynym oficjalnym źródłem alertów kryzysowych w Polsce pozostaje PAA.",
       creator1Name: "Norbert",
       creator1Desc: "Twórca. Specjalista od sprzętu, systemów wbudowanych i Internetu Rzeczy. 'Nie umiem robić rzeczy, ale jak już coś zrobię, to może się przydać'",
       creator2Name: "Mikołaj Lubiak",
-      creator2Desc: "Starszy inżynier oprogramowania i specjalista ds. bezpieczeństwa cyfrowego. Odświeżył wizerunek z naciskiem na Ostrołękę, przebudował stronę oraz mechanizm przetwarzania i usprawnił oprogramowanie układowe."
+      creator2Desc: "Inżynier oprogramowania i pasjonat bezpieczeństwa. Zadbał o to, żeby strona była szybka, a dane rzetelnie przetwarzane."
     },
     en: {
       title: "Ostrołęka Radiation Monitoring System",
-      subtitle: "Smart City Dashboard | Ostrołęka",
+      subtitle: "Independent monitoring for Ostrołęka residents",
       instantLabel: "Current Reading",
       avgLabel: "Average (1h)",
       cpmLabel: "CPM:",
@@ -536,23 +536,23 @@ const INDEX_HTML = `<!DOCTYPE html>
       aboutDesc: "<strong>OSMR (Ostrołęka Radiation Monitoring System)</strong> is an independent and fully functional measuring station operating in Ostrołęka <strong>continuously for over 3 years</strong>. Its goal is to provide 24/7 open environmental data on the level of ionizing radiation in our city.",
       bgTitle: "What is Background Radiation?",
       bgDesc: "Natural background radiation in Ostrołęka and the entire Mazovia region usually stays within <strong>0.10 - 0.25 µSv/h</strong> (microsieverts per hour). It comes directly from space and natural elements present in the environment. These levels are <strong>part of a completely healthy norm</strong>, so occasional fluctuations even around 0.40 µSv should not be a cause for concern.",
-      benefitsTitle: "Benefits for the Smart City Initiative",
-      benefitsIntro: "City investment in existing infrastructure provides tangible benefits for Ostrołęka and its citizens:",
-      benefit1: "<strong>City Image:</strong> <span class='desc'>Promotes Ostrołęka as a modern city committed to transparency and open environmental data.</span>",
-      benefit2: "<strong>Citizen Awareness:</strong> <span class='desc'>Quick verification from an independent source builds trust and provides peace of mind for residents.</span>",
-      benefit3: "<strong>Crisis Support:</strong> <span class='desc'>The system provides an API that can be easily integrated with local emergency notification tools.</span>",
-      benefit4: "<strong>Educational Data:</strong> <span class='desc'>The measurement archive is a great resource for local students to learn data analysis and physics.</span>",
-      partnerTitle: "Regional Partnership Opportunity",
-      partnerDesc: "Trust and continuity in technology implementation are keys to the success of a modern city. We look forward to contacting official departments of the City Hall.",
+      benefitsTitle: "Why we do this",
+      benefitsIntro: "We want to provide everyone with free and easy access to local environmental data:",
+      benefit1: "<strong>Transparency:</strong> <span class='desc'>Showing that Ostrołęka can have its own open environmental data sources.</span>",
+      benefit2: "<strong>Facts over rumors:</strong> <span class='desc'>When uncertainty arises online, you can check the actual radiation levels here.</span>",
+      benefit3: "<strong>Readiness:</strong> <span class='desc'>Our data can be easily integrated into local warning systems via our open API.</span>",
+      benefit4: "<strong>For students:</strong> <span class='desc'>We share our data archive with local schools for real-world physics and data analysis lessons.</span>",
+      partnerTitle: "Local Cooperation",
+      partnerDesc: "We believe such initiatives thrive with the support of the local community and authorities. Feel free to reach out.",
       partnerHerb: "COAT OF ARMS",
-      partnerVis: "Partnership Visualization",
+      partnerVis: "Our vision of partnership",
       partnerSupport: "Project supported by the Ostrołęka City Hall",
-      disclaimerTitle: "Methodological Attestation:",
-      disclaimerText: "The system uses professional Geiger-Müller tubes capable of monitoring radiation in real-time, performing calibrations to a constant CPM. We emphasize that PAA remains the official state institutional body for issuing national crisis evacuation alerts.",
+      disclaimerTitle: "Good to know:",
+      disclaimerText: "While we use professional gear and ensure calibration, remember: PAA remains the only official source for national emergency alerts in Poland.",
       creator1Name: "Norbert",
       creator1Desc: "The creator. Hardware, embedded and IoT specialist. 'I can't make stuff, if I do, it might be of use'",
       creator2Name: "Mikołaj Lubiak",
-      creator2Desc: "Senior software engineering and cybersecurity specialist. Remade the branding focusing on Ostrołęka, remade the website and worker and improved the firmware."
+      creator2Desc: "Software engineer and security enthusiast. He made sure the site is fast and data is processed reliably."
     }
   };
 
