@@ -183,10 +183,9 @@ export function renderIndex() {
   
   .benefits-list { list-style: none; padding: 0; margin-top: 1.5rem; display: flex; flex-direction: column; gap: 1.25rem; }
   .benefits-list li { 
-    display: grid; 
-    grid-template-columns: 32px 1fr; 
+    display: flex; 
     gap: 1.25rem; 
-    align-items: start;
+    align-items: center;
     padding: 1rem;
     background: var(--bg);
     border-radius: 12px;
@@ -233,8 +232,6 @@ export function renderIndex() {
 
   @media (min-width: 640px) {
     .benefits-list li {
-      grid-template-columns: 40px 150px 1fr;
-      align-items: baseline;
       gap: 1.5rem;
     }
     .benefits-list li::before {
@@ -242,7 +239,15 @@ export function renderIndex() {
       height: 40px;
       font-size: 1.15rem;
     }
-    .benefits-list li strong {
+    .benefits-item-content {
+      flex-direction: row;
+      align-items: baseline;
+      gap: 1.5rem;
+      flex: 1;
+    }
+    .benefits-item-content strong {
+      width: 150px;
+      flex-shrink: 0;
       margin-bottom: 0;
     }
   }
@@ -354,10 +359,10 @@ export function renderIndex() {
     <h2 style="margin-top: 1.5rem;" data-i18n="benefitsTitle">Korzyści dla Inicjatywy Smart City</h2>
     <p id="benefitsIntro" data-i18n="benefitsIntro">Inwestycja i zaangażowanie miasta w już istniejącą, solidną lokalną infrastrukturę otwiera szerokie pole korzyści społecznych dla Miasta i Obywateli:</p>
     <ul class="benefits-list">
-      <li data-i18n="benefit1"></li>
-      <li data-i18n="benefit2"></li>
-      <li data-i18n="benefit3"></li>
-      <li data-i18n="benefit4"></li>
+      <li><div class="benefits-item-content" data-i18n="benefit1"></div></li>
+      <li><div class="benefits-item-content" data-i18n="benefit2"></div></li>
+      <li><div class="benefits-item-content" data-i18n="benefit3"></div></li>
+      <li><div class="benefits-item-content" data-i18n="benefit4"></div></li>
     </ul>
 
     <div class="partner-box">
