@@ -608,11 +608,11 @@ const INDEX_HTML = `<!DOCTYPE html>
 
       instantEl.style.color = instantColor;
       animateValue(instantEl, lastInstant, d.instant_usv, 800);
-      animateValue(avgEl,     lastAvg,     d.avg_usv,     800);
-      animateValue(cpmEl,     lastCpm,     d.cpm,         800);
-
-      lastInstant = d.instant_usv;
-      lastAvg     = d.avg_usv;
+      const currentRange = document.getElementById("range").value;
+      if (currentRange === "1hr") {
+        animateValue(avgEl, lastAvg, d.avg_usv, 800);
+        lastAvg = d.avg_usv;
+      }
       lastCpm     = d.cpm;
 
       if (d.offline) {
@@ -659,6 +659,24 @@ const INDEX_HTML = `<!DOCTYPE html>
         return t.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
       });
       const chartData = d.data.map((row) => row.usv);
+      
+      const avgUsv = chartData.length > 0 ? chartData.reduce((a, b) => a + b, 0) / chartData.length : 0;
+      const avgEl = document.getElementById("avg");
+      const t = translations[currentLang] || translations["pl"];
+      const rangeEl = document.getElementById("range");
+      const selectedOptionText = rangeEl.options[rangeEl.selectedIndex].textContent;
+      
+      // Update Average Value with animation
+      animateValue(avgEl, lastAvg, avgUsv, 800);
+      lastAvg = avgUsv;
+
+      // Update Label to reflect range (e.g. "Ostatnie 24h")
+      const labelEl = document.querySelector('[data-i18n="avgLabel"]');
+      if (labelEl) {
+        const base = t.avgLabel.split('(')[0].trim();
+        const suffix = w === "1hr" ? "1h" : w.replace("hr", "h").replace("day", "d");
+        labelEl.textContent = base + " (" + suffix + ")";
+      }
 
       requestAnimationFrame(() => {
         chart.data.labels = labels;
@@ -680,8 +698,11 @@ const INDEX_HTML = `<!DOCTYPE html>
       const key = el.getAttribute("data-i18n");
       const val = t[key] || translations["pl"][key];
       if (val) {
-        // Support HTML/entities in keys.
-        if (val.includes("<") || val.includes("&")) {
+        if (key === "avgLabel") {
+          const w = document.getElementById("range").value;
+          const suffix = w === "1hr" ? "1h" : w.replace("hr", "h").replace("day", "d");
+          el.textContent = val.split('(')[0].trim() + " (" + suffix + ")";
+        } else if (val.includes("<") || val.includes("&")) {
           el.innerHTML = val;
         } else {
           el.textContent = val;
