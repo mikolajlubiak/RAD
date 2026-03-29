@@ -5,7 +5,8 @@ const jsonResponse = (data, status = 200, maxAge = 60) => {
     status,
     headers: {
       "Content-Type": "application/json",
-      "Cache-Control": maxAge > 0 ? `public, max-age=${maxAge}` : "no-store"
+      "Cache-Control": maxAge > 0 ? `public, max-age=${maxAge}` : "no-store",
+      "Access-Control-Allow-Origin": "*"
     }
   });
 };
@@ -147,7 +148,12 @@ export default {
       case "/":
       case "/index.html":
         if (request.method === "GET") {
-          return new Response(renderIndex(), { headers: { "Content-Type": "text/html" } });
+          return new Response(renderIndex(), { 
+            headers: { 
+              "Content-Type": "text/html",
+              "Content-Security-Policy": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://rad.icmt.cc https://cloudflareinsights.com; img-src 'self' data: https://icmt.cc;"
+            } 
+          });
         }
         break;
     }
