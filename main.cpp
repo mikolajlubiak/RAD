@@ -6,8 +6,8 @@
 #include <cstdint>
 #include <time.h>
 
-constexpr const char *WIFI_SSID = "yes";     // wifi name
-constexpr const char *WIFI_4PASSWORD = "no"; // wifi pass
+constexpr const char *WIFI_SSID = "yes";    // wifi name
+constexpr const char *WIFI_PASSWORD = "no"; // wifi pass
 constexpr const char *API_URL =
     "https://rad.changeme.workers.dev/ingest"; // <-- change changeme
 constexpr const char *DEVICE_TOKEN = "xxx";    // secret
