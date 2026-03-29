@@ -1,5 +1,9 @@
 import { renderIndex } from "./template.js";
 
+const HOUR = 3_600_000;
+const DAY = 86_400_000;
+const OFFLINE_THRESHOLD_MS = 10 * 60_000;
+
 const jsonResponse = (data, status = 200, maxAge = 60) => {
   return new Response(JSON.stringify(data), {
     status,
@@ -51,7 +55,7 @@ async function handleLatest(env) {
 
   let totalClicks = 0;
   try {
-    const since = Date.now() - 3600_000;
+    const since = Date.now() - HOUR;
     const query = await env.RAD_D1.prepare(
       "SELECT SUM(clicks) AS s FROM readings WHERE ts >= ?;"
     ).bind(since).all();
@@ -69,7 +73,7 @@ async function handleLatest(env) {
 
   const lastUpdate = latest?.receivedAt || 0;
   const diffMs = Date.now() - lastUpdate;
-  const offline = diffMs > 600_000;
+  const offline = diffMs > OFFLINE_THRESHOLD_MS;
 
   return jsonResponse({
     latest,
@@ -85,36 +89,46 @@ async function handleLatest(env) {
 async function handleHistory(url, env) {
   const w = url.searchParams.get("window") || "1hr";
   const windows = {
-    "1hr": 60 * 60e3,
-    "12hr": 12 * 3600e3,
-    "1day": 24 * 3600e3,
-    "3day": 3 * 86400e3,
-    "7day": 7 * 86400e3,
-    "15day": 15 * 86400e3,
-    "35day": 35 * 86400e3,
-    "70day": 70 * 86400e3,
-    "140day": 140 * 86400e3,
+    "1hr": HOUR,
+    "12hr": 12 * HOUR,
+    "1day": DAY,
+    "3day": 3 * DAY,
+    "7day": 7 * DAY,
+    "15day": 15 * DAY,
+    "35day": 35 * DAY,
+    "70day": 70 * DAY,
+    "140day": 140 * DAY,
+  };
+  const buckets = {
+    "12hr": 10 * 60_000,
+    "1day": 30 * 60_000,
+    "3day": HOUR,
+    "7day": 2 * HOUR,
+    "15day": 4 * HOUR,
+    "35day": 8 * HOUR,
+    "70day": 16 * HOUR,
+    "140day": DAY,
+  };
+  const cacheMaxAge = {
+    "12hr": 300, "1day": 300,
+    "3day": 1800, "7day": 1800,
+    "15day": 3600, "35day": 3600, "70day": 3600, "140day": 3600,
   };
   const ms = windows[w] || windows["1hr"];
   const since = Date.now() - ms;
-
-  let bucketMs = 0;
-  if (w === "12hr") bucketMs = 10 * 60e3;
-  else if (w === "1day") bucketMs = 30 * 60e3;
-  else if (w === "3day") bucketMs = 3600e3;
-  else if (w === "7day") bucketMs = 2 * 3600e3;
-  else if (w === "15day") bucketMs = 4 * 3600e3;
-  else if (w === "35day") bucketMs = 8 * 3600e3;
-  else if (w === "70day") bucketMs = 16 * 3600e3;
-  else if (w === "140day") bucketMs = 24 * 3600e3;
+  const bucketMs = buckets[w] || 0;
 
   try {
-    let query = "SELECT ts, clicks FROM readings WHERE ts >= ? ORDER BY ts ASC;";
+    let rows;
     if (bucketMs > 0) {
-      query = `SELECT (CAST(ts / ${bucketMs} AS INTEGER)) * ${bucketMs} as ts, AVG(clicks) as clicks FROM readings WHERE ts >= ? GROUP BY CAST(ts / ${bucketMs} AS INTEGER) ORDER BY ts ASC;`;
+      rows = await env.RAD_D1.prepare(
+        "SELECT (ts - ts % ?) as ts, AVG(clicks) as clicks FROM readings WHERE ts >= ? GROUP BY (ts - ts % ?) ORDER BY ts ASC;"
+      ).bind(bucketMs, since, bucketMs).all();
+    } else {
+      rows = await env.RAD_D1.prepare(
+        "SELECT ts, clicks FROM readings WHERE ts >= ? ORDER BY ts ASC;"
+      ).bind(since).all();
     }
-
-    const rows = await env.RAD_D1.prepare(query).bind(since).all();
 
     const cfg = getConfig(env);
     const data = rows.results.map(r => ({
@@ -122,10 +136,7 @@ async function handleHistory(url, env) {
       usv: (r.clicks / (cfg.intervalMs / 60000)) * cfg.cpmToUsv,
     }));
 
-    let maxAge = 60;
-    if (w === "12hr" || w === "1day") maxAge = 300;
-    else if (w === "3day" || w === "7day") maxAge = 1800;
-    else if (w === "15day" || w === "35day" || w === "70day" || w === "140day") maxAge = 3600;
+    const maxAge = cacheMaxAge[w] || 60;
 
     return jsonResponse({ data }, 200, maxAge);
   } catch (e) {
@@ -155,11 +166,11 @@ export default {
       case "/":
       case "/index.html":
         if (request.method === "GET") {
-          return new Response(renderIndex(), { 
-            headers: { 
+          return new Response(renderIndex(), {
+            headers: {
               "Content-Type": "text/html",
               "Content-Security-Policy": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://rad.icmt.cc https://cloudflareinsights.com; img-src 'self' data: https://icmt.cc;"
-            } 
+            }
           });
         }
         break;

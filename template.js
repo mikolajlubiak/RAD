@@ -1,5 +1,4 @@
-export function renderIndex() {
-  return `<!DOCTYPE html>
+const INDEX_HTML = `<!DOCTYPE html>
 <html lang="pl">
 <head>
 <meta charset="UTF-8" />
@@ -334,7 +333,7 @@ export function renderIndex() {
     </div>
     <div class="btn-group">
       <button id="themeToggle" class="btn">🌙</button>
-      <button id="notifToggle" class="btn" data-i18n="notifyOff">🔔 Powiadomienia: Wył</button>
+      <button id="notifToggle" class="btn">🔔 Powiadomienia: Wył</button>
       <button id="langToggle" class="btn">🌐 PL</button>
     </div>
   </header>
@@ -395,13 +394,13 @@ export function renderIndex() {
   <!-- Pitch / About Details -->
   <div class="card info-content animate-fade delay-3">
     <h2 data-i18n="aboutTitle">O projekcie</h2>
-    <p id="aboutDesc" data-i18n="aboutDesc"><strong>OSMR (Ostrołęcki System Monitorowania Radiacyjnego)</strong> to niezależna i w pełni funkcjonalna stacja pomiarowa działająca w Ostrołęce <strong>nieprzerwanie od ponad 3 lat</strong>. Jej celem jest całodobowe dostarczanie otwartych danych środowiskowych o poziomie promieniowania jonizującego w naszym mieście.</p>
+    <p data-i18n="aboutDesc"><strong>OSMR (Ostrołęcki System Monitorowania Radiacyjnego)</strong> to niezależna i w pełni funkcjonalna stacja pomiarowa działająca w Ostrołęce <strong>nieprzerwanie od ponad 3 lat</strong>. Jej celem jest całodobowe dostarczanie otwartych danych środowiskowych o poziomie promieniowania jonizującego w naszym mieście.</p>
     
     <h2 style="margin-top: 1.5rem;" data-i18n="bgTitle">Czym jest Promieniowanie Tła?</h2>
-    <p id="bgDesc" data-i18n="bgDesc">Naturalne promieniowanie przestrzeni w Ostrołęce i na całym Mazowszu zazwyczaj znajduje się w granicach <strong>0.10 - 0.25 µSv/h</strong> (mikrosiwertów na godzinę). Pochodzi ono bezpośrednio z kosmosu oraz naturalnych pierwiastków obecnych w środowisku. Granice te to <strong>część całkowicie zdrowej normy</strong>, stąd dorywcze wahania nawet w okolice 0.40 µSv nie powinny być powodem do niepokoju.</p>
+    <p data-i18n="bgDesc">Naturalne promieniowanie przestrzeni w Ostrołęce i na całym Mazowszu zazwyczaj znajduje się w granicach <strong>0.10 - 0.25 µSv/h</strong> (mikrosiwertów na godzinę). Pochodzi ono bezpośrednio z kosmosu oraz naturalnych pierwiastków obecnych w środowisku. Granice te to <strong>część całkowicie zdrowej normy</strong>, stąd dorywcze wahania nawet w okolice 0.40 µSv nie powinny być powodem do niepokoju.</p>
     
     <h2 style="margin-top: 1.5rem;" data-i18n="benefitsTitle">Korzyści dla Inicjatywy Smart City</h2>
-    <p id="benefitsIntro" data-i18n="benefitsIntro">Inwestycja i zaangażowanie miasta w już istniejącą, solidną lokalną infrastrukturę otwiera szerokie pole korzyści społecznych dla Miasta i Obywateli:</p>
+    <p data-i18n="benefitsIntro">Inwestycja i zaangażowanie miasta w już istniejącą, solidną lokalną infrastrukturę otwiera szerokie pole korzyści społecznych dla Miasta i Obywateli:</p>
     <ul class="benefits-list">
       <li><div class="benefits-item-content" data-i18n="benefit1"></div></li>
       <li><div class="benefits-item-content" data-i18n="benefit2"></div></li>
@@ -730,7 +729,6 @@ export function renderIndex() {
     const t = translations[lang] || translations["pl"];
     document.title = "OSMR - " + t.title;
     document.documentElement.lang = lang;
-    document.getElementById("mainTitle").textContent = t.title;
     document.getElementById("langToggle").textContent = "🌐 " + lang.toUpperCase();
     
     // Auto-map translations to elements
@@ -803,7 +801,7 @@ export function renderIndex() {
 
     document.getElementById("range").addEventListener("change", fetchHistory);
 
-    setInterval(fetchLatest, 2000);
+    setInterval(fetchLatest, 30000);
     setInterval(fetchHistory, 300000);
     fetchLatest();
     fetchHistory();
@@ -812,4 +810,7 @@ export function renderIndex() {
 </script>
 </body>
 </html>`;
+
+export function renderIndex() {
+  return INDEX_HTML;
 }
