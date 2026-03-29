@@ -319,7 +319,7 @@ export function renderIndex() {
 (() => {
   "use strict";
 
-  let notifOn = false;
+  let notifOn = localStorage.getItem("notifications_enabled") === "true";
   let currentLang = "pl";
   
   const ctx = document.getElementById("chart").getContext("2d");
@@ -627,6 +627,7 @@ export function renderIndex() {
       }
     }
     applyLang(currentLang);
+    document.getElementById("notifToggle").classList.toggle("active", notifOn);
     
     document.getElementById("themeToggle").addEventListener("click", () => {
       document.documentElement.classList.toggle('dark');
@@ -646,8 +647,12 @@ export function renderIndex() {
     });
 
     document.getElementById("notifToggle").addEventListener("click", async (e) => {
-      if (!notifOn) await Notification.requestPermission();
+      if (!notifOn) {
+        const permission = await Notification.requestPermission();
+        if (permission !== "granted") return;
+      }
       notifOn = !notifOn;
+      localStorage.setItem("notifications_enabled", notifOn);
       const t = translations[currentLang];
       e.target.textContent = notifOn ? t.notifyOn : t.notifyOff;
       e.target.classList.toggle("active", notifOn);
