@@ -1,36 +1,41 @@
 #include <Arduino.h>
-#include <ESP8266WiFi.h>
-#include <ESP8266HTTPClient.h>
 #include <ArduinoJson.h>
-#include <time.h>
 #include <ArduinoOTA.h>
+#include <ESP8266HTTPClient.h>
+#include <ESP8266WiFi.h>
+#include <cstdint>
+#include <time.h>
 
-const char* WIFI_SSID     = "yes"; // wifi name
-const char* WIFI_PASSWORD = "no"; // wifi pass
-const char* API_URL       = "https://rad.changeme.workers.dev/ingest";  // <-- change changeme
-const char* DEVICE_TOKEN  = "xxx";  // secret
+constexpr const char *WIFI_SSID = "yes";    // wifi name
+constexpr const char *WIFI_PASSWORD = "no"; // wifi pass
+constexpr const char *API_URL =
+    "https://rad.changeme.workers.dev/ingest"; // <-- change changeme
+constexpr const char *DEVICE_TOKEN = "xxx";    // secret
 
-#define GEIGER_PIN D5
+constexpr uint8_t GEIGER_PIN = D5;
+constexpr unsigned long SEND_INTERVAL_MS = 300000;
+constexpr unsigned long WIFI_TIMEOUT_MS = 300;
+constexpr unsigned long LOOP_DELAY_MS = 5;
+constexpr unsigned long SERIAL_BAUD = 115200;
 
 volatile unsigned long counts = 0;
 
-void IRAM_ATTR countPulse() {
-  counts++;
-}
+void IRAM_ATTR countPulse() { counts++; }
 
-void sendData(unsigned long cpm);
+bool sendData(unsigned long cpm);
 
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(SERIAL_BAUD);
   pinMode(BUILTIN_LED, OUTPUT);
   pinMode(GEIGER_PIN, INPUT_PULLUP);
   attachInterrupt(digitalPinToInterrupt(GEIGER_PIN), countPulse, FALLING);
 
   WiFi.mode(WIFI_STA);
+  WiFi.setAutoReconnect(true);
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
   Serial.print("WiFi...");
   while (WiFi.status() != WL_CONNECTED) {
-    delay(300);
+    delay(WIFI_TIMEOUT_MS);
     Serial.print(".");
   }
   Serial.println("Connected!");
@@ -39,22 +44,23 @@ void setup() {
   ArduinoOTA.setHostname("RADdevice");
   ArduinoOTA.setPassword("OTAupdate");
 
-  ArduinoOTA.onStart([]() {
-    Serial.println("Start updating...");
-  });
-  ArduinoOTA.onEnd([]() {
-    Serial.println("\nUpdate complete!");
-  });
+  ArduinoOTA.onStart([]() { Serial.println("Start updating..."); });
+  ArduinoOTA.onEnd([]() { Serial.println("\nUpdate complete!"); });
   ArduinoOTA.onProgress([](unsigned int progress, unsigned int total) {
     Serial.printf("Progress: %u%%\r", (progress / (total / 100)));
   });
   ArduinoOTA.onError([](ota_error_t error) {
     Serial.printf("Error[%u]: ", error);
-    if (error == OTA_AUTH_ERROR) Serial.println("Auth Failed");
-    else if (error == OTA_BEGIN_ERROR) Serial.println("Begin Failed");
-    else if (error == OTA_CONNECT_ERROR) Serial.println("Connect Failed");
-    else if (error == OTA_RECEIVE_ERROR) Serial.println("Receive Failed");
-    else if (error == OTA_END_ERROR) Serial.println("End Failed");
+    if (error == OTA_AUTH_ERROR)
+      Serial.println("Auth Failed");
+    else if (error == OTA_BEGIN_ERROR)
+      Serial.println("Begin Failed");
+    else if (error == OTA_CONNECT_ERROR)
+      Serial.println("Connect Failed");
+    else if (error == OTA_RECEIVE_ERROR)
+      Serial.println("Receive Failed");
+    else if (error == OTA_END_ERROR)
+      Serial.println("End Failed");
   });
 
   ArduinoOTA.begin();
@@ -67,7 +73,7 @@ void loop() {
   static unsigned long lastSend = 0;
   unsigned long now = millis();
 
-  if (now - lastSend >= 300000) {
+  if (now - lastSend >= SEND_INTERVAL_MS) {
     lastSend = now;
 
     noInterrupts();
@@ -75,17 +81,21 @@ void loop() {
     counts = 0;
     interrupts();
 
-    sendData(pulseCount);
+    if (!sendData(pulseCount)) {
+      noInterrupts();
+      counts += pulseCount; // Restore data if posting failed
+      interrupts();
+    }
   }
 
-  delay(5);
+  delay(LOOP_DELAY_MS);
 }
 
-void sendData(unsigned long pulseCount) {
+bool sendData(unsigned long pulseCount) {
   if (WiFi.status() != WL_CONNECTED) {
     Serial.println("WiFi not connected");
     digitalWrite(BUILTIN_LED, HIGH);
-    return;
+    return false;
   }
 
   WiFiClientSecure client;
@@ -94,7 +104,7 @@ void sendData(unsigned long pulseCount) {
 
   if (!http.begin(client, API_URL)) {
     Serial.println("HTTP begin failed");
-    return;
+    return false;
   }
 
   http.addHeader("Content-Type", "application/json");
@@ -109,9 +119,13 @@ void sendData(unsigned long pulseCount) {
 
   Serial.printf("Sending %lu clicks\n", pulseCount);
 
+  bool success = false;
   int httpCode = http.POST(json);
   if (httpCode > 0) {
     Serial.printf("POST -> %d\n", httpCode);
+    if (httpCode == 200 || httpCode == 201) {
+      success = true;
+    }
   } else {
     Serial.printf("POST failed: %s\n", http.errorToString(httpCode).c_str());
     digitalWrite(BUILTIN_LED, HIGH);
@@ -119,7 +133,10 @@ void sendData(unsigned long pulseCount) {
 
   http.end();
 
-  digitalWrite(BUILTIN_LED, LOW);
-  delay(50);
-  digitalWrite(BUILTIN_LED, HIGH);
+  if (success) {
+    digitalWrite(BUILTIN_LED, LOW);
+    delay(50);
+    digitalWrite(BUILTIN_LED, HIGH);
+  }
+  return success;
 }
