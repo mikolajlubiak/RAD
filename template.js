@@ -15,7 +15,6 @@ const INDEX_HTML = `<!DOCTYPE html>
 
 <style>
   :root {
-    /* Modern Light Theme Palette */
     --bg: #f8fafc;
     --card: #ffffff;
     --accent: #2563eb;
@@ -25,7 +24,6 @@ const INDEX_HTML = `<!DOCTYPE html>
     --text-muted: #475569;
     --border: #e2e8f0;
     
-    /* Status Colors */
     --status-safe: #10b981;
     --status-safe-bg: #d1fae5;
     --status-caution: #f59e0b;
@@ -36,7 +34,6 @@ const INDEX_HTML = `<!DOCTYPE html>
     --status-danger-bg: #fee2e2;
   }
 
-  /* Dark Theme Palette */
   html.dark {
     --bg: #0f172a;
     --card: #1e293b;
@@ -70,7 +67,6 @@ const INDEX_HTML = `<!DOCTYPE html>
     gap: 1.5rem;
   }
 
-  /* Animations */
   @keyframes fadeInUp {
     from { opacity: 0; transform: translateY(15px); }
     to { opacity: 1; transform: translateY(0); }
@@ -85,7 +81,6 @@ const INDEX_HTML = `<!DOCTYPE html>
   .delay-3 { animation-delay: 0.3s; }
   .delay-4 { animation-delay: 0.4s; }
 
-  /* Header */
   .app-header {
     display: flex;
     flex-direction: column;
@@ -123,7 +118,6 @@ const INDEX_HTML = `<!DOCTYPE html>
     letter-spacing: 0.05em;
   }
 
-  /* Buttons */
   .btn-group { display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap; }
   .btn {
     background: var(--card); border: 1px solid var(--border);
@@ -136,7 +130,6 @@ const INDEX_HTML = `<!DOCTYPE html>
   .btn:hover { background: var(--bg); color: var(--text); border-color: var(--text-muted); }
   .btn.active { color: var(--accent); border-color: var(--accent); background: var(--accent-light); }
 
-  /* Cards */
   .card {
     background: var(--card);
     border-radius: 16px;
@@ -145,7 +138,6 @@ const INDEX_HTML = `<!DOCTYPE html>
     border: 1px solid var(--border);
   }
 
-  /* KPI Grid */
   .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; }
   .kpi-card { display: flex; flex-direction: column; justify-content: center; }
   .kpi-label { font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 0.5rem; }
@@ -154,7 +146,6 @@ const INDEX_HTML = `<!DOCTYPE html>
   .kpi-unit { font-size: 1rem; font-weight: 600; color: var(--text-muted); }
   .kpi-meta { font-size: 0.85rem; color: var(--text-muted); margin-top: 0.5rem; display: flex; align-items: center; gap: 0.25rem;}
 
-  /* Status Legend / Badges */
   .status-legend { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 1rem; }
   .badge {
     padding: 0.35rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; 
@@ -167,7 +158,6 @@ const INDEX_HTML = `<!DOCTYPE html>
   .bg-high { background: var(--status-high); }
   .bg-danger { background: var(--status-danger); }
 
-  /* Chart Layout */
   .chart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
   .chart-title { font-size: 1rem; font-weight: 600; margin: 0; }
   select {
@@ -179,7 +169,6 @@ const INDEX_HTML = `<!DOCTYPE html>
   }
   .chart-container { position: relative; height: 300px; width: 100%; }
 
-  /* Info / Pitch Section */
   .info-content { font-size: 0.95rem; line-height: 1.6; color: var(--text-muted); }
   .info-content h2 { font-size: 1.15rem; color: var(--text); font-weight: 700; margin-top: 0; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem; }
   .info-content h2::before { content: ""; display: block; width: 4px; height: 1.15rem; background: var(--accent); border-radius: 2px; }
@@ -256,7 +245,6 @@ const INDEX_HTML = `<!DOCTYPE html>
     }
   }
 
-  /* Partner Box */
   .partner-box {
     margin-top: 2rem; border: 2px dashed var(--border); border-radius: 12px; padding: 2rem;
     text-align: center; background: var(--bg); transition: all 0.3s ease;
@@ -265,7 +253,6 @@ const INDEX_HTML = `<!DOCTYPE html>
   .partner-box h3 { margin: 0 0 0.5rem; font-size: 1rem; color: var(--text); }
   .partner-box p { margin: 0; font-size: 0.85rem; color: var(--text-muted); }
 
-  /* Footer Section */
   .disclaimer { font-size: 0.8rem; color: var(--text-muted); padding-top: 1.5rem; border-top: 1px solid var(--border); margin-top: 1.5rem; }
   .creator-footer {
     margin-top: 3rem;
@@ -315,7 +302,6 @@ const INDEX_HTML = `<!DOCTYPE html>
     width: fit-content;
   }
 
-  /* Offline Alert */
   .offline-alert {
     background: var(--status-danger-bg); color: #991b1b; padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid #f87171;
     font-size: 0.85rem; font-weight: 600; display: none; align-items: center; gap: 0.5rem; margin-bottom: 1rem;
@@ -327,7 +313,6 @@ const INDEX_HTML = `<!DOCTYPE html>
 
 <div class="container" role="main">
   
-  <!-- Header -->
   <header class="app-header animate-fade">
     <div class="header-left">
       <div class="header-logo">OSMR</div>
@@ -345,7 +330,6 @@ const INDEX_HTML = `<!DOCTYPE html>
 
   <div id="offline" class="offline-alert animate-fade"></div>
 
-  <!-- Key Performance Indicators -->
   <div class="kpi-grid animate-fade delay-1">
     
     <div class="card kpi-card">
@@ -375,7 +359,6 @@ const INDEX_HTML = `<!DOCTYPE html>
     </div>
   </div>
 
-  <!-- Chart Configuration -->
   <div class="card animate-fade delay-2">
     <div class="chart-header">
       <h2 class="chart-title" data-i18n="trendLabel">Trend Zmian</h2>
@@ -396,7 +379,6 @@ const INDEX_HTML = `<!DOCTYPE html>
     </div>
   </div>
 
-  <!-- Pitch / About Details -->
   <div class="card info-content animate-fade delay-3">
     <h2 data-i18n="aboutTitle">O projekcie</h2>
     <p data-i18n="aboutDesc"><strong>OSMR (Ostrołęcki System Monitorowania Radiacyjnego)</strong> to niezależna i w pełni funkcjonalna stacja pomiarowa działająca w Ostrołęce <strong>nieprzerwanie od ponad 3 lat</strong>. Jej celem jest całodobowe dostarczanie otwartych danych środowiskowych o poziomie promieniowania jonizującego w naszym mieście.</p>
@@ -430,7 +412,6 @@ const INDEX_HTML = `<!DOCTYPE html>
       <strong data-i18n="disclaimerTitle">Kwestia Atestacji Metodologicznej:</strong> <span data-i18n="disclaimerText">System korzysta z profesjonalnych tub Geigera-Müllera zdolnych monitorować promieniowanie na bieżąco, wykonując kalibracje do stałego CPM. Podkreślamy, że oficjalnym instytucjonalnym organem Państwowym do wysyłania ogólnokrajowych, ewakuacyjnych alertów kryzysowych prawnie pozostaje zawsze PAA.</span>
     </div>
 
-    <!-- Creator Footer -->
     <footer class="creator-footer animate-fade delay-4">
       <div class="creator-card">
         <div class="creator-name" data-i18n="creator1Name">Norbert</div>
@@ -455,8 +436,6 @@ const INDEX_HTML = `<!DOCTYPE html>
   let notifOn = localStorage.getItem("notifications_enabled") === "true";
   let currentLang = "pl";
   
-  // Declared here so fetchLatest/fetchHistory can reference them; initialised
-  // inside DOMContentLoaded where layout is stable and deferred Chart.js has run.
   let ctx = null;
   let chart = null;
   const offlineEl = document.getElementById("offline");
@@ -468,11 +447,9 @@ const INDEX_HTML = `<!DOCTYPE html>
 
   const updateChartTheme = () => {
     if (!chart) return;
-    // Batch reads before any writes.
     const isDark = document.documentElement.classList.contains("dark");
     const gridColor  = isDark ? "#334155" : "#f1f5f9";
     const tooltipBg  = isDark ? 'rgba(30, 41, 59, 0.9)' : 'rgba(15, 23, 42, 0.9)';
-    // Defer the chart render to the next frame — no forced reflow after DOM writes.
     requestAnimationFrame(() => {
       chart.options.scales.y.grid.color = gridColor;
       chart.options.plugins.tooltip.backgroundColor = tooltipBg;
@@ -593,17 +570,14 @@ const INDEX_HTML = `<!DOCTYPE html>
     return "var(--status-danger)";
   };
 
-  // Helper function to animate number counting up
   const animateValue = (obj, start, end, duration) => {
     let startTimestamp = null;
     const step = (timestamp) => {
       if (!startTimestamp) startTimestamp = timestamp;
       const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-      // smooth ease out
       const easeOut = progress * (2 - progress);
       const current = (progress === 1) ? end : start + (end - start) * easeOut;
       
-      // Keep integer format if max value is integer (like CPM), otherwise keep decimals
       obj.innerHTML = (end % 1 !== 0) ? current.toFixed(3) : Math.floor(current);
       if (progress < 1) {
         window.requestAnimationFrame(step);
@@ -621,7 +595,6 @@ const INDEX_HTML = `<!DOCTYPE html>
       const r = await fetch("/latest");
       const d = await r.json();
 
-      // --- Batch all DOM reads first (prevents forced reflow) ---
       const instantEl   = document.getElementById("instant");
       const avgEl       = document.getElementById("avg");
       const cpmEl       = document.getElementById("cpm");
@@ -629,7 +602,6 @@ const INDEX_HTML = `<!DOCTYPE html>
       const instantColor = getColor(d.instant_usv);
       const borderColor  = (d.instant_usv <= 0.3) ? (isDark ? "#3b82f6" : "#2563eb") : instantColor;
 
-      // --- Batch all DOM writes ---
       instantEl.style.color = instantColor;
       animateValue(instantEl, lastInstant, d.instant_usv, 800);
       animateValue(avgEl,     lastAvg,     d.avg_usv,     800);
@@ -647,8 +619,6 @@ const INDEX_HTML = `<!DOCTYPE html>
         offlineEl.style.display = "none";
       }
 
-      // Defer chart update to next animation frame — avoids forced reflow
-      // after the style writes above invalidated the layout.
       if (chart) {
         requestAnimationFrame(() => {
           chart.data.datasets[0].borderColor = borderColor;
@@ -673,7 +643,6 @@ const INDEX_HTML = `<!DOCTYPE html>
       const r = await fetch("/history?window=" + w);
       const d = await r.json();
 
-      // Pre-compute labels and data entirely in JS — no DOM reads involved.
       const isMultiDay = w.includes('day');
       const labels = d.data.map((row) => {
         const t = new Date(row.ts);
@@ -687,8 +656,6 @@ const INDEX_HTML = `<!DOCTYPE html>
       });
       const chartData = d.data.map((row) => row.usv);
 
-      // Write to chart + update atomically inside a single RAF — no interleaved
-      // layout reads between a DOM write and chart.update().
       requestAnimationFrame(() => {
         chart.data.labels = labels;
         chart.data.datasets[0].data = chartData;
@@ -705,7 +672,6 @@ const INDEX_HTML = `<!DOCTYPE html>
     document.documentElement.lang = lang;
     document.getElementById("langToggle").textContent = "🌐 " + lang.toUpperCase();
     
-    // Auto-map translations to elements
     document.querySelectorAll("[data-i18n]").forEach(el => {
       const key = el.getAttribute("data-i18n");
       const val = t[key] || translations["pl"][key];
@@ -719,7 +685,6 @@ const INDEX_HTML = `<!DOCTYPE html>
       }
     });
     
-    // Toggle active state styling on the language button
     document.getElementById("notifToggle").textContent = notifOn ? (t.notifyOn || translations["pl"].notifyOn) : (t.notifyOff || translations["pl"].notifyOff);
 
     const isDark = document.documentElement.classList.contains('dark');
@@ -728,7 +693,6 @@ const INDEX_HTML = `<!DOCTYPE html>
   };
 
   document.addEventListener("DOMContentLoaded", async () => {
-    // ── 1. UI wiring — no library needed, runs immediately ───────────────────
     const savedLang = localStorage.getItem("preferred_lang");
     if (savedLang && translations[savedLang]) {
       currentLang = savedLang;
@@ -773,16 +737,9 @@ const INDEX_HTML = `<!DOCTYPE html>
 
     document.getElementById("range").addEventListener("change", fetchHistory);
 
-    // ── 2. KPI data — starts immediately, needs no charting library ───────────
     fetchLatest();
     setInterval(fetchLatest, 30000);
 
-    // ── 3. Dynamically load only the Chart.js components we actually use ──────
-    //    The full UMD bundle auto-registers every chart type (bar, pie, radar…).
-    //    Importing the ESM build and calling Chart.register() explicitly means
-    //    unused controllers, scales, and plugins are never instantiated.
-    //    Crucially, the download is deferred until here — after the page is
-    //    already interactive — keeping ~200 KB off the critical path entirely.
     const {
       Chart, LineController, LineElement, PointElement,
       CategoryScale, LinearScale, Filler, Tooltip
@@ -793,7 +750,6 @@ const INDEX_HTML = `<!DOCTYPE html>
       CategoryScale, LinearScale, Filler, Tooltip
     );
 
-    // ── 4. Chart init — layout is stable, Chart.js is ready ─────────────────
     ctx = document.getElementById("chart").getContext("2d");
     const gradient = ctx.createLinearGradient(0, 0, 0, 300);
     gradient.addColorStop(0, 'rgba(37, 99, 235, 0.2)');

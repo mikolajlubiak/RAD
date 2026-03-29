@@ -14,11 +14,7 @@ constexpr const char *DEVICE_TOKEN = "xxx";    // secret
 constexpr const char *OTA_HOSTNAME = "RADdevice";
 constexpr const char *OTA_PASSWORD = "OTAupdate";
 
-// TLS certificate verification
-// Set to the SHA-1 fingerprint of your server's certificate for MITM protection:
-// openssl s_client -connect your-worker.workers.dev:443 < /dev/null 2>/dev/null | openssl x509 -fingerprint -sha1 -noout
-// Note: fingerprint must be updated when the server certificate rotates (~90 days for Cloudflare)
-// Leave empty to disable verification (insecure, vulnerable to MITM)
+// TLS fingerprint for MITM protection (SHA-1)
 constexpr const char *TLS_FINGERPRINT = "";
 
 constexpr uint8_t GEIGER_PIN = D5;
