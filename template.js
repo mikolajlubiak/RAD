@@ -1,27 +1,33 @@
-export function renderIndex() {
-  return `<!DOCTYPE html>
+const INDEX_HTML = `<!DOCTYPE html>
 <html lang="pl">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://rad.icmt.cc https://cloudflareinsights.com; img-src 'self' data: https://icmt.cc;">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://*.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://rad.icmt.cc https://*.cloudflareinsights.com; img-src 'self' data: https://icmt.cc;">
 <title>OSMR - Ostrołęcki System Monitorowania Radiacyjnego</title>
+<meta name="description" content="OSMR - niezależna stacja pomiarowa promieniowania jonizującego w Ostrołęce. Dane na żywo, wykresy historyczne i alerty. Część inicjatywy Smart City.">
 <link rel="icon" type="image/png" href="https://icmt.cc/p/rad-the-local-radiaton-website/favicon_hu_dc0b661d74b90e4d.png" />
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="dns-prefetch" href="https://static.cloudflareinsights.com">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" as="script">
+<link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" as="style">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"></noscript>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" defer></script>
+
 <style>
   :root {
-    /* Modern Light Theme Palette */
     --bg: #f8fafc;
     --card: #ffffff;
     --accent: #2563eb;
     --accent-hover: #1d4ed8;
     --accent-light: #eff6ff;
     --text: #0f172a;
-    --text-muted: #64748b;
+    --text-muted: #475569;
     --border: #e2e8f0;
     
-    /* Status Colors */
     --status-safe: #10b981;
     --status-safe-bg: #d1fae5;
     --status-caution: #f59e0b;
@@ -32,7 +38,6 @@ export function renderIndex() {
     --status-danger-bg: #fee2e2;
   }
 
-  /* Dark Theme Palette */
   html.dark {
     --bg: #0f172a;
     --card: #1e293b;
@@ -66,7 +71,6 @@ export function renderIndex() {
     gap: 1.5rem;
   }
 
-  /* Animations */
   @keyframes fadeInUp {
     from { opacity: 0; transform: translateY(15px); }
     to { opacity: 1; transform: translateY(0); }
@@ -81,7 +85,6 @@ export function renderIndex() {
   .delay-3 { animation-delay: 0.3s; }
   .delay-4 { animation-delay: 0.4s; }
 
-  /* Header */
   .app-header {
     display: flex;
     flex-direction: column;
@@ -119,7 +122,6 @@ export function renderIndex() {
     letter-spacing: 0.05em;
   }
 
-  /* Buttons */
   .btn-group { display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap; }
   .btn {
     background: var(--card); border: 1px solid var(--border);
@@ -132,7 +134,6 @@ export function renderIndex() {
   .btn:hover { background: var(--bg); color: var(--text); border-color: var(--text-muted); }
   .btn.active { color: var(--accent); border-color: var(--accent); background: var(--accent-light); }
 
-  /* Cards */
   .card {
     background: var(--card);
     border-radius: 16px;
@@ -141,7 +142,6 @@ export function renderIndex() {
     border: 1px solid var(--border);
   }
 
-  /* KPI Grid */
   .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; }
   .kpi-card { display: flex; flex-direction: column; justify-content: center; }
   .kpi-label { font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 0.5rem; }
@@ -150,7 +150,6 @@ export function renderIndex() {
   .kpi-unit { font-size: 1rem; font-weight: 600; color: var(--text-muted); }
   .kpi-meta { font-size: 0.85rem; color: var(--text-muted); margin-top: 0.5rem; display: flex; align-items: center; gap: 0.25rem;}
 
-  /* Status Legend / Badges */
   .status-legend { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 1rem; }
   .badge {
     padding: 0.35rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; 
@@ -163,7 +162,6 @@ export function renderIndex() {
   .bg-high { background: var(--status-high); }
   .bg-danger { background: var(--status-danger); }
 
-  /* Chart Layout */
   .chart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
   .chart-title { font-size: 1rem; font-weight: 600; margin: 0; }
   select {
@@ -175,7 +173,6 @@ export function renderIndex() {
   }
   .chart-container { position: relative; height: 300px; width: 100%; }
 
-  /* Info / Pitch Section */
   .info-content { font-size: 0.95rem; line-height: 1.6; color: var(--text-muted); }
   .info-content h2 { font-size: 1.15rem; color: var(--text); font-weight: 700; margin-top: 0; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem; }
   .info-content h2::before { content: ""; display: block; width: 4px; height: 1.15rem; background: var(--accent); border-radius: 2px; }
@@ -252,7 +249,6 @@ export function renderIndex() {
     }
   }
 
-  /* Partner Box */
   .partner-box {
     margin-top: 2rem; border: 2px dashed var(--border); border-radius: 12px; padding: 2rem;
     text-align: center; background: var(--bg); transition: all 0.3s ease;
@@ -261,7 +257,6 @@ export function renderIndex() {
   .partner-box h3 { margin: 0 0 0.5rem; font-size: 1rem; color: var(--text); }
   .partner-box p { margin: 0; font-size: 0.85rem; color: var(--text-muted); }
 
-  /* Footer Section */
   .disclaimer { font-size: 0.8rem; color: var(--text-muted); padding-top: 1.5rem; border-top: 1px solid var(--border); margin-top: 1.5rem; }
   .creator-footer {
     margin-top: 3rem;
@@ -311,7 +306,6 @@ export function renderIndex() {
     width: fit-content;
   }
 
-  /* Offline Alert */
   .offline-alert {
     background: var(--status-danger-bg); color: #991b1b; padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid #f87171;
     font-size: 0.85rem; font-weight: 600; display: none; align-items: center; gap: 0.5rem; margin-bottom: 1rem;
@@ -321,27 +315,25 @@ export function renderIndex() {
 </head>
 <body>
 
-<div class="container">
+<div class="container" role="main">
   
-  <!-- Header -->
   <header class="app-header animate-fade">
     <div class="header-left">
       <div class="header-logo">OSMR</div>
       <div>
-        <div class="subtitle" data-i18n="subtitle">Panel Inteligentnego Miasta &bull; Ostrołęka</div>
+        <div class="subtitle" data-i18n="subtitle">Niezależny monitoring dla mieszkańców Ostrołęki</div>
         <h1 id="mainTitle" data-i18n="title">Ostrołęcki System Monitorowania Radiacyjnego</h1>
       </div>
     </div>
     <div class="btn-group">
       <button id="themeToggle" class="btn">🌙</button>
-      <button id="notifToggle" class="btn" data-i18n="notifyOff">🔔 Powiadomienia: Wył</button>
+      <button id="notifToggle" class="btn">🔔 Powiadomienia: Wył</button>
       <button id="langToggle" class="btn">🌐 PL</button>
     </div>
   </header>
 
   <div id="offline" class="offline-alert animate-fade"></div>
 
-  <!-- Key Performance Indicators -->
   <div class="kpi-grid animate-fade delay-1">
     
     <div class="card kpi-card">
@@ -371,11 +363,10 @@ export function renderIndex() {
     </div>
   </div>
 
-  <!-- Chart Configuration -->
   <div class="card animate-fade delay-2">
     <div class="chart-header">
       <h2 class="chart-title" data-i18n="trendLabel">Trend Zmian</h2>
-      <select id="range">
+      <select id="range" aria-label="Zakres czasowy">
         <option value="1hr" selected data-i18n="range1h">Ostatnia 1 godzina</option>
         <option value="12hr" data-i18n="range12h">Ostatnie 12 godzin</option>
         <option value="1day" data-i18n="range1d">Ostatnia 1 doba</option>
@@ -392,16 +383,15 @@ export function renderIndex() {
     </div>
   </div>
 
-  <!-- Pitch / About Details -->
   <div class="card info-content animate-fade delay-3">
     <h2 data-i18n="aboutTitle">O projekcie</h2>
-    <p id="aboutDesc" data-i18n="aboutDesc"><strong>OSMR (Ostrołęcki System Monitorowania Radiacyjnego)</strong> to niezależna i w pełni funkcjonalna stacja pomiarowa działająca w Ostrołęce <strong>nieprzerwanie od ponad 3 lat</strong>. Jej celem jest całodobowe dostarczanie otwartych danych środowiskowych o poziomie promieniowania jonizującego w naszym mieście.</p>
+    <p data-i18n="aboutDesc"><strong>OSMR (Ostrołęcki System Monitorowania Radiacyjnego)</strong> to niezależna i w pełni funkcjonalna stacja pomiarowa działająca w Ostrołęce <strong>nieprzerwanie od ponad 3 lat</strong>. Jej celem jest całodobowe dostarczanie otwartych danych środowiskowych o poziomie promieniowania jonizującego w naszym mieście.</p>
     
     <h2 style="margin-top: 1.5rem;" data-i18n="bgTitle">Czym jest Promieniowanie Tła?</h2>
-    <p id="bgDesc" data-i18n="bgDesc">Naturalne promieniowanie przestrzeni w Ostrołęce i na całym Mazowszu zazwyczaj znajduje się w granicach <strong>0.10 - 0.25 µSv/h</strong> (mikrosiwertów na godzinę). Pochodzi ono bezpośrednio z kosmosu oraz naturalnych pierwiastków obecnych w środowisku. Granice te to <strong>część całkowicie zdrowej normy</strong>, stąd dorywcze wahania nawet w okolice 0.40 µSv nie powinny być powodem do niepokoju.</p>
+    <p data-i18n="bgDesc">Naturalne promieniowanie przestrzeni w Ostrołęce i na całym Mazowszu zazwyczaj znajduje się w granicach <strong>0.10 - 0.25 µSv/h</strong> (mikrosiwertów na godzinę). Pochodzi ono bezpośrednio z kosmosu oraz naturalnych pierwiastków obecnych w środowisku. Granice te to <strong>część całkowicie zdrowej normy</strong>, stąd dorywcze wahania nawet w okolice 0.40 µSv nie powinny być powodem do niepokoju.</p>
     
-    <h2 style="margin-top: 1.5rem;" data-i18n="benefitsTitle">Korzyści dla Inicjatywy Smart City</h2>
-    <p id="benefitsIntro" data-i18n="benefitsIntro">Inwestycja i zaangażowanie miasta w już istniejącą, solidną lokalną infrastrukturę otwiera szerokie pole korzyści społecznych dla Miasta i Obywateli:</p>
+    <h2 style="margin-top: 1.5rem;" data-i18n="benefitsTitle">Po co to robimy?</h2>
+    <p data-i18n="benefitsIntro">Chcemy, aby dostęp do rzetelnych danych o naszym środowisku był prosty i darmowy dla każdego:</p>
     <ul class="benefits-list">
       <li><div class="benefits-item-content" data-i18n="benefit1"></div></li>
       <li><div class="benefits-item-content" data-i18n="benefit2"></div></li>
@@ -410,23 +400,22 @@ export function renderIndex() {
     </ul>
 
     <div class="partner-box">
-      <h3 data-i18n="partnerTitle">Możliwość Partnerstwa Regionalnego</h3>
-      <p style="margin-bottom: 1.25rem;" data-i18n="partnerDesc">Zaufanie i ciągłość wdrażania technologii to klucz sukcesu nowoczesnego miasta. Czekamy na kontakt z oficjalnymi wydziałami Urzędu Miasta.</p>
+      <h3 data-i18n="partnerTitle">Współpraca lokalna</h3>
+      <p style="margin-bottom: 1.25rem;" data-i18n="partnerDesc">Wierzymy, że takie inicjatywy najlepiej działają przy wsparciu lokalnej społeczności i samorządu. Zapraszamy do kontaktu.</p>
       
       <div style="padding: 1rem 1.5rem; border: 1px solid var(--border); border-radius: 8px; background: var(--card); font-weight: 600; color: var(--text); display: inline-flex; align-items: center; justify-content: center; gap: 1rem; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05); text-align: left; line-height: 1.2;">
         <div style="width: 40px; height: 48px; background: #fef08a; border: 2px solid #eab308; border-radius: 4px; display:flex; align-items:center; justify-content:center; color: #854d0e; font-size:10px; font-weight: bold; flex-shrink: 0;" title="Herb Ostrołęki" data-i18n="partnerHerb">HERB</div>
         <div>
-          <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.2rem;" data-i18n="partnerVis">Wizualizacja Partnerstwa</div>
-          <div style="font-size: 1rem;" data-i18n="partnerSupport">Projekt wspierany przez Urząd Miasta Ostrołęki</div>
+          <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.2rem;" data-i18n="partnerVis">Nasza wizja współpracy</div>
+          <div style="font-size: 1rem;" data-i18n="partnerSupport">Projekt może być wspierany przez Urząd Miasta Ostrołęki</div>
         </div>
       </div>
     </div>
 
     <div class="disclaimer">
-      <strong data-i18n="disclaimerTitle">Kwestia Atestacji Metodologicznej:</strong> <span data-i18n="disclaimerText">System korzysta z profesjonalnych tub Geigera-Müllera zdolnych monitorować promieniowanie na bieżąco, wykonując kalibracje do stałego CPM. Podkreślamy, że oficjalnym instytucjonalnym organem Państwowym do wysyłania ogólnokrajowych, ewakuacyjnych alertów kryzysowych prawnie pozostaje zawsze PAA.</span>
+      <strong data-i18n="disclaimerTitle">Warto wiedzieć:</strong> <span data-i18n="disclaimerText">Choć używamy profesjonalnego sprzętu i dbamy o kalibrację, pamiętaj: jedynym oficjalnym źródłem alertów kryzysowych w Polsce pozostaje PAA.</span>
     </div>
 
-    <!-- Creator Footer -->
     <footer class="creator-footer animate-fade delay-4">
       <div class="creator-card">
         <div class="creator-name" data-i18n="creator1Name">Norbert</div>
@@ -436,7 +425,7 @@ export function renderIndex() {
       <div class="creator-card">
         <div class="creator-name" data-i18n="creator2Name">Mikołaj Lubiak</div>
         <a href="mailto:lubiak@proton.me" class="creator-contact">lubiak@proton.me</a>
-        <div class="creator-desc" data-i18n="creator2Desc">Senior software engineering i cybersecurity specialist. Odświeżył branding z naciskiem na Ostrołękę, przebudował stronę oraz worker i usprawnił firmware.</div>
+        <div class="creator-desc" data-i18n="creator2Desc">Inżynier oprogramowania i pasjonat bezpieczeństwa. Zadbał o to, żeby strona była szybka, a dane rzetelnie przetwarzane.</div>
         <div class="nip-info">NIP: 5253065759</div>
       </div>
     </footer>
@@ -451,80 +440,31 @@ export function renderIndex() {
   let notifOn = localStorage.getItem("notifications_enabled") === "true";
   let currentLang = "pl";
   
-  const ctx = document.getElementById("chart").getContext("2d");
+  let ctx = null;
+  let chart = null;
   const offlineEl = document.getElementById("offline");
 
-  // Init Theme
+  // Init theme early to avoid flicker.
   if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
     document.documentElement.classList.add('dark');
   }
 
   const updateChartTheme = () => {
-    if (typeof chart === 'undefined') return;
+    if (!chart) return;
     const isDark = document.documentElement.classList.contains("dark");
-    chart.options.scales.y.grid.color = isDark ? "#334155" : "#f1f5f9";
-    chart.options.plugins.tooltip.backgroundColor = isDark ? 'rgba(30, 41, 59, 0.9)' : 'rgba(15, 23, 42, 0.9)';
-    chart.update();
+    const gridColor  = isDark ? "#334155" : "#f1f5f9";
+    const tooltipBg  = isDark ? 'rgba(30, 41, 59, 0.9)' : 'rgba(15, 23, 42, 0.9)';
+    requestAnimationFrame(() => {
+      chart.options.scales.y.grid.color = gridColor;
+      chart.options.plugins.tooltip.backgroundColor = tooltipBg;
+      chart.update('none');
+    });
   };
-
-  // Create awesome gradient fill for the chart line
-  const gradient = ctx.createLinearGradient(0, 0, 0, 300);
-  gradient.addColorStop(0, 'rgba(37, 99, 235, 0.2)'); // var(--accent)
-  gradient.addColorStop(1, 'rgba(37, 99, 235, 0)');
-
-  const chart = new Chart(ctx, {
-    type: "line",
-    data: {
-      labels: [],
-      datasets: [
-        {
-          label: "µSv/h",
-          data: [],
-          borderColor: "#2563eb",
-          backgroundColor: gradient,
-          borderWidth: 2,
-          pointRadius: 0, // hide dots for cleaner look, show on hover
-          pointHoverRadius: 4,
-          tension: 0.4, // smooth bezier curves!
-          fill: true,
-        },
-      ],
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      interaction: { mode: 'index', intersect: false },
-      scales: {
-        x: { 
-          grid: { display: false, drawBorder: false },
-          ticks: { color: "#94a3b8", maxTicksLimit: 8 }
-        },
-        y: { 
-          grid: { color: "#f1f5f9", drawBorder: false },
-          ticks: { color: "#94a3b8" },
-          beginAtZero: true 
-        },
-      },
-      plugins: { 
-        legend: { display: false },
-        tooltip: {
-          backgroundColor: 'rgba(15, 23, 42, 0.9)',
-          titleFont: { family: 'Inter', size: 13 },
-          bodyFont: { family: 'Inter', size: 13, weight: 'bold' },
-          padding: 10,
-          cornerRadius: 8,
-          displayColors: false
-        }
-      },
-    },
-  });
-
-  updateChartTheme();
 
   const translations = {
     pl: {
       title: "Ostrołęcki System Monitorowania Radiacyjnego",
-      subtitle: "Panel Inteligentnego Miasta &bull; Ostrołęka",
+      subtitle: "Niezależny monitoring dla mieszkańców Ostrołęki",
       instantLabel: "Odczyt Bieżący",
       avgLabel: "Średnia (1h)",
       cpmLabel: "CPM:",
@@ -542,6 +482,7 @@ export function renderIndex() {
       range35d: "Ostatnie 35 dni",
       range70d: "Ostatnie 70 dni",
       range140d: "Ostatnie 140 dni",
+      rangePeriodLabel: "Zakres czasowy",
       notifyOn: "🔔 Powiadomienia: Wł",
       notifyOff: "🔔 Powiadomienia: Wył",
       offline: "Brak łączności z bazą od",
@@ -551,27 +492,27 @@ export function renderIndex() {
       aboutDesc: "<strong>OSMR (Ostrołęcki System Monitorowania Radiacyjnego)</strong> to niezależna i w pełni funkcjonalna stacja pomiarowa działająca w Ostrołęce <strong>nieprzerwanie od ponad 3 lat</strong>. Jej celem jest całodobowe dostarczanie otwartych danych środowiskowych o poziomie promieniowania jonizującego w naszym mieście.",
       bgTitle: "Czym jest Promieniowanie Tła?",
       bgDesc: "Naturalne promieniowanie przestrzeni w Ostrołęce i na całym Mazowszu zazwyczaj znajduje się w granicach <strong>0.10 - 0.25 µSv/h</strong> (mikrosiwertów na godzinę). Pochodzi ono bezpośrednio z kosmosu oraz naturalnych pierwiastków obecnych w środowisku. Granice te to <strong>część całkowicie zdrowej normy</strong>, stąd dorywcze wahania nawet w okolice 0.40 µSv nie powinny być powodem do niepokoju.",
-      benefitsTitle: "Korzyści dla Inicjatywy Inteligentnego Miasta",
-      benefitsIntro: "Inwestycja i zaangażowanie miasta w już istniejącą, solidną lokalną infrastrukturę otwiera szerokie pole korzyści społecznych dla Miasta i Obywateli:",
-      benefit1: "<strong>Pionierstwo Wizerunkowe:</strong> <span class='desc'>Bezkonkurencyjnie wznosi Ostrołękę w poczet projektów 'Inteligentnego Miasta' dzięki udostępnianiu danych na żywo.</span>",
-      benefit2: "<strong>Edukacja Ekologiczna:</strong> <span class='desc'>Łatwa i błyskawiczna weryfikacja danych z niezależnego źródła buduje spokój ducha (szczególnie istotne obok Elektrowni).</span>",
-      benefit3: "<strong>Narzędzie Sztabu Kryzysowego:</strong> <span class='desc'>Nasz nowoczesny system pozwala na udostępnienie dedykowanego interfejsu programistycznego (API) dla miejskich systemów powiadamiania.</span>",
-      benefit4: "<strong>Edukacja W Szkole:</strong> <span class='desc'>Otwarty dostęp do archiwum wykresów to znakomite, realne narządzie analityczne dla uczniów lokalnych techników i liceów uczących się fizyki i matematyki.</span>",
-      partnerTitle: "Możliwość Partnerstwa Regionalnego",
-      partnerDesc: "Zaufanie i ciągłość wdrażania technologii to klucz sukcesu nowoczesnego miasta. Czekamy na kontakt z oficjalnymi wydziałami Urzędu Miasta.",
+      benefitsTitle: "Po co to robimy?",
+      benefitsIntro: "Chcemy, aby dostęp do rzetelnych danych o naszym środowisku był prosty i darmowy dla każdego:",
+      benefit1: "<strong>Transparentność:</strong> <span class='desc'>Pokazujemy, że Ostrołęka może mieć własne, otwarte źródła danych o środowisku.</span>",
+      benefit2: "<strong>Spokój i wiedza:</strong> <span class='desc'>Gdy w sieci pojawiają się plotki, u nas sprawdzisz faktyczny stan promieniowania w Twojej okolicy.</span>",
+      benefit3: "<strong>Gotowość:</strong> <span class='desc'>Nasze dane można łatwo podpiąć pod lokalne systemy ostrzegania (udostępniamy API).</span>",
+      benefit4: "<strong>Dla uczniów:</strong> <span class='desc'>Udostępniamy archiwa nauczycielom i uczniom do realnych doświadczeń na lekcjach fizyki.</span>",
+      partnerTitle: "Współpraca lokalna",
+      partnerDesc: "Wierzymy, że takie inicjatywy najlepiej działają przy wsparciu lokalnej społeczności i samorządu. Zapraszamy do kontaktu.",
       partnerHerb: "HERB",
-      partnerVis: "Wizualizacja Partnerstwa",
-      partnerSupport: "Projekt wspierany przez Urząd Miasta Ostrołęki",
-      disclaimerTitle: "Kwestia Atestacji Metodologicznej:",
-      disclaimerText: "System korzysta z profesjonalnych tub Geigera-Müllera zdolnych monitorować promieniowanie na bieżąco, wykonując kalibracje do stałego CPM. Podkreślamy, że oficjalnym instytucjonalnym organem Państwowym do wysyłania ogólnokrajowych, ewakuacyjnych alertów kryzysowych prawnie pozostaje zawsze PAA.",
+      partnerVis: "Nasza wizja współpracy",
+      partnerSupport: "Projekt może być wspierany przez Urząd Miasta Ostrołęki",
+      disclaimerTitle: "Warto wiedzieć:",
+      disclaimerText: "Choć używamy profesjonalnego sprzętu i dbamy o kalibrację, pamiętaj: jedynym oficjalnym źródłem alertów kryzysowych w Polsce pozostaje PAA.",
       creator1Name: "Norbert",
       creator1Desc: "Twórca. Specjalista od sprzętu, systemów wbudowanych i Internetu Rzeczy. 'Nie umiem robić rzeczy, ale jak już coś zrobię, to może się przydać'",
       creator2Name: "Mikołaj Lubiak",
-      creator2Desc: "Starszy inżynier oprogramowania i specjalista ds. bezpieczeństwa cyfrowego. Odświeżył wizerunek z naciskiem na Ostrołękę, przebudował stronę oraz mechanizm przetwarzania i usprawnił oprogramowanie układowe."
+      creator2Desc: "Inżynier oprogramowania i pasjonat bezpieczeństwa. Zadbał o to, żeby strona była szybka, a dane rzetelnie przetwarzane."
     },
     en: {
       title: "Ostrołęka Radiation Monitoring System",
-      subtitle: "Smart City Dashboard &bull; Ostrołęka",
+      subtitle: "Independent monitoring for Ostrołęka residents",
       instantLabel: "Current Reading",
       avgLabel: "Average (1h)",
       cpmLabel: "CPM:",
@@ -589,6 +530,7 @@ export function renderIndex() {
       range35d: "Last 35 days",
       range70d: "Last 70 days",
       range140d: "Last 140 days",
+      rangePeriodLabel: "Time range",
       notifyOn: "🔔 Notify: On",
       notifyOff: "🔔 Notify: Off",
       offline: "Station offline for",
@@ -598,23 +540,23 @@ export function renderIndex() {
       aboutDesc: "<strong>OSMR (Ostrołęka Radiation Monitoring System)</strong> is an independent and fully functional measuring station operating in Ostrołęka <strong>continuously for over 3 years</strong>. Its goal is to provide 24/7 open environmental data on the level of ionizing radiation in our city.",
       bgTitle: "What is Background Radiation?",
       bgDesc: "Natural background radiation in Ostrołęka and the entire Mazovia region usually stays within <strong>0.10 - 0.25 µSv/h</strong> (microsieverts per hour). It comes directly from space and natural elements present in the environment. These levels are <strong>part of a completely healthy norm</strong>, so occasional fluctuations even around 0.40 µSv should not be a cause for concern.",
-      benefitsTitle: "Benefits for the Smart City Initiative",
-      benefitsIntro: "Investment and city engagement in existing, robust local infrastructure opens a wide field of social benefits for the City and its Citizens:",
-      benefit1: "<strong>Image Pioneering:</strong> <span class='desc'>Unrivaled elevation of Ostrołęka into the ranks of 'Smart City' projects through the provision of live data.</span>",
-      benefit2: "<strong>Ecological Education:</strong> <span class='desc'>Easy and instant verification of data from an independent source builds peace of mind (especially important near the Power Plant).</span>",
-      benefit3: "<strong>Crisis Management Tool:</strong> <span class='desc'>Our modern framework allows for a dedicated integration (API) into city-wide notification systems.</span>",
-      benefit4: "<strong>School Education:</strong> <span class='desc'>Open access to the chart archive is an excellent, real analytical tool for students of local technical and high schools learning physics and mathematics.</span>",
-      partnerTitle: "Regional Partnership Opportunity",
-      partnerDesc: "Trust and continuity in technology implementation are keys to the success of a modern city. We look forward to contacting official departments of the City Hall.",
+      benefitsTitle: "Why we do this",
+      benefitsIntro: "We want to provide everyone with free and easy access to local environmental data:",
+      benefit1: "<strong>Transparency:</strong> <span class='desc'>Showing that Ostrołęka can have its own open environmental data sources.</span>",
+      benefit2: "<strong>Facts over rumors:</strong> <span class='desc'>When uncertainty arises online, you can check the actual radiation levels here.</span>",
+      benefit3: "<strong>Readiness:</strong> <span class='desc'>Our data can be easily integrated into local warning systems via our open API.</span>",
+      benefit4: "<strong>For students:</strong> <span class='desc'>We share our data archive with local schools for real-world physics and data analysis lessons.</span>",
+      partnerTitle: "Local Cooperation",
+      partnerDesc: "We believe such initiatives thrive with the support of the local community and authorities. Feel free to reach out.",
       partnerHerb: "COAT OF ARMS",
-      partnerVis: "Partnership Visualization",
+      partnerVis: "Our vision of partnership",
       partnerSupport: "Project supported by the Ostrołęka City Hall",
-      disclaimerTitle: "Methodological Attestation:",
-      disclaimerText: "The system uses professional Geiger-Müller tubes capable of monitoring radiation in real-time, performing calibrations to a constant CPM. We emphasize that PAA remains the official state institutional body for issuing national crisis evacuation alerts.",
+      disclaimerTitle: "Good to know:",
+      disclaimerText: "While we use professional gear and ensure calibration, remember: PAA remains the only official source for national emergency alerts in Poland.",
       creator1Name: "Norbert",
       creator1Desc: "The creator. Hardware, embedded and IoT specialist. 'I can't make stuff, if I do, it might be of use'",
       creator2Name: "Mikołaj Lubiak",
-      creator2Desc: "Senior software engineering and cybersecurity specialist. Remade the branding focusing on Ostrołęka, remade the website and worker and improved the firmware."
+      creator2Desc: "Software engineer and security enthusiast. He made sure the site is fast and data is processed reliably."
     }
   };
 
@@ -632,17 +574,14 @@ export function renderIndex() {
     return "var(--status-danger)";
   };
 
-  // Helper function to animate number counting up
   const animateValue = (obj, start, end, duration) => {
     let startTimestamp = null;
     const step = (timestamp) => {
       if (!startTimestamp) startTimestamp = timestamp;
       const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-      // smooth ease out
       const easeOut = progress * (2 - progress);
       const current = (progress === 1) ? end : start + (end - start) * easeOut;
       
-      // Keep integer format if max value is integer (like CPM), otherwise keep decimals
       obj.innerHTML = (end % 1 !== 0) ? current.toFixed(3) : Math.floor(current);
       if (progress < 1) {
         window.requestAnimationFrame(step);
@@ -659,35 +598,36 @@ export function renderIndex() {
     try {
       const r = await fetch("/latest");
       const d = await r.json();
-      
-      const instantEl = document.getElementById("instant");
-      const avgEl = document.getElementById("avg");
-      const cpmEl = document.getElementById("cpm");
-      
-      // Color Logic
+
+      const instantEl   = document.getElementById("instant");
+      const avgEl       = document.getElementById("avg");
+      const cpmEl       = document.getElementById("cpm");
+      const isDark      = document.documentElement.classList.contains("dark");
       const instantColor = getColor(d.instant_usv);
+      const borderColor  = (d.instant_usv <= 0.3) ? (isDark ? "#3b82f6" : "#2563eb") : instantColor;
+
       instantEl.style.color = instantColor;
-
-      // Animate Numbers beautifully
       animateValue(instantEl, lastInstant, d.instant_usv, 800);
-      animateValue(avgEl, lastAvg, d.avg_usv, 800);
-      animateValue(cpmEl, lastCpm, d.cpm, 800);
-      
-      lastInstant = d.instant_usv;
-      lastAvg = d.avg_usv;
-      lastCpm = d.cpm;
+      animateValue(avgEl,     lastAvg,     d.avg_usv,     800);
+      animateValue(cpmEl,     lastCpm,     d.cpm,         800);
 
-      // Chart line color matches danger level, defaults to accent blue if safe
-      const isDark = document.documentElement.classList.contains("dark");
-      chart.data.datasets[0].borderColor = (d.instant_usv <= 0.3) ? (isDark ? "#3b82f6" : "#2563eb") : instantColor;
-      chart.update();
+      lastInstant = d.instant_usv;
+      lastAvg     = d.avg_usv;
+      lastCpm     = d.cpm;
 
       if (d.offline) {
-        offlineEl.style.display = "flex";
         const t = translations[currentLang] || translations["pl"];
+        offlineEl.style.display = "flex";
         offlineEl.innerHTML = "⚠️ " + t.offline + " " + formatAgo(d.lastSeenAgo);
       } else {
         offlineEl.style.display = "none";
+      }
+
+      if (chart) {
+        requestAnimationFrame(() => {
+          chart.data.datasets[0].borderColor = borderColor;
+          chart.update('none');
+        });
       }
 
       if (notifOn && d.instant_usv > 0.5) {
@@ -701,26 +641,30 @@ export function renderIndex() {
   };
 
   const fetchHistory = async () => {
+    if (!chart) return;
     try {
       const w = document.getElementById("range").value;
       const r = await fetch("/history?window=" + w);
       const d = await r.json();
-      const points = d.data.map((row) => ({
-        x: new Date(row.ts),
-        y: row.usv,
-      }));
+
       const isMultiDay = w.includes('day');
-      chart.data.labels = points.map((p) => {
+      const labels = d.data.map((row) => {
+        const t = new Date(row.ts);
         if (w === '70day' || w === '140day') {
-          return p.x.toLocaleDateString([], {year: 'numeric', month: 'short', day: 'numeric'});
+          return t.toLocaleDateString([], {year: 'numeric', month: 'short', day: 'numeric'});
         }
         if (isMultiDay) {
-          return p.x.toLocaleString([], {month: 'numeric', day: 'numeric', hour: '2-digit', minute:'2-digit'});
+          return t.toLocaleString([], {month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit'});
         }
-        return p.x.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        return t.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
       });
-      chart.data.datasets[0].data = points.map((p) => p.y);
-      chart.update();
+      const chartData = d.data.map((row) => row.usv);
+
+      requestAnimationFrame(() => {
+        chart.data.labels = labels;
+        chart.data.datasets[0].data = chartData;
+        chart.update();
+      });
     } catch (e) {
       console.error("Failed to fetch history:", e);
     }
@@ -730,15 +674,13 @@ export function renderIndex() {
     const t = translations[lang] || translations["pl"];
     document.title = "OSMR - " + t.title;
     document.documentElement.lang = lang;
-    document.getElementById("mainTitle").textContent = t.title;
     document.getElementById("langToggle").textContent = "🌐 " + lang.toUpperCase();
     
-    // Auto-map translations to elements
     document.querySelectorAll("[data-i18n]").forEach(el => {
       const key = el.getAttribute("data-i18n");
       const val = t[key] || translations["pl"][key];
       if (val) {
-        // Use innerHTML for keys that contain HTML tags or entities
+        // Support HTML/entities in keys.
         if (val.includes("<") || val.includes("&")) {
           el.innerHTML = val;
         } else {
@@ -747,15 +689,14 @@ export function renderIndex() {
       }
     });
     
-    // Toggle active state styling on the language button
     document.getElementById("notifToggle").textContent = notifOn ? (t.notifyOn || translations["pl"].notifyOn) : (t.notifyOff || translations["pl"].notifyOff);
 
     const isDark = document.documentElement.classList.contains('dark');
     document.getElementById("themeToggle").textContent = isDark ? (t.themeLight || translations["pl"].themeLight) : (t.themeDark || translations["pl"].themeDark);
+    document.getElementById("range").setAttribute("aria-label", t.rangePeriodLabel || translations["pl"].rangePeriodLabel);
   };
 
-  document.addEventListener("DOMContentLoaded", () => {
-    // Detect & Apply language
+  document.addEventListener("DOMContentLoaded", async () => {
     const savedLang = localStorage.getItem("preferred_lang");
     if (savedLang && translations[savedLang]) {
       currentLang = savedLang;
@@ -763,22 +704,19 @@ export function renderIndex() {
       const browserLangs = navigator.languages || [navigator.language];
       for (const l of browserLangs) {
         const short = l.split("-")[0].toLowerCase();
-        if (translations[short]) {
-          currentLang = short;
-          break;
-        }
+        if (translations[short]) { currentLang = short; break; }
       }
     }
     applyLang(currentLang);
     document.getElementById("notifToggle").classList.toggle("active", notifOn);
-    
+
     document.getElementById("themeToggle").addEventListener("click", () => {
       document.documentElement.classList.toggle('dark');
       const isDark = document.documentElement.classList.contains('dark');
       localStorage.theme = isDark ? 'dark' : 'light';
       applyLang(currentLang);
       updateChartTheme();
-      fetchLatest(); // refresh line color
+      fetchLatest();
     });
 
     document.getElementById("langToggle").addEventListener("click", () => {
@@ -803,13 +741,65 @@ export function renderIndex() {
 
     document.getElementById("range").addEventListener("change", fetchHistory);
 
-    setInterval(fetchLatest, 2000);
-    setInterval(fetchHistory, 300000);
     fetchLatest();
+    setInterval(fetchLatest, 30000);
+
+    // Chart.js UMD build is already registered if we use the full bundle.
+    if (typeof Chart === 'undefined') {
+      console.error("Chart.js not loaded. Verify CDN connectivity.");
+      return;
+    }
+
+    ctx = document.getElementById("chart").getContext("2d");
+    const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+    gradient.addColorStop(0, 'rgba(37, 99, 235, 0.2)');
+    gradient.addColorStop(1, 'rgba(37, 99, 235, 0)');
+
+    chart = new Chart(ctx, {
+      type: "line",
+      data: {
+        labels: [],
+        datasets: [{
+          label: "µSv/h",
+          data: [],
+          borderColor: "#2563eb",
+          backgroundColor: gradient,
+          borderWidth: 2,
+          pointRadius: 0,
+          pointHoverRadius: 4,
+          tension: 0.4,
+          fill: true,
+        }],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
+        scales: {
+          x: { grid: { display: false, drawBorder: false }, ticks: { color: "#94a3b8", maxTicksLimit: 8 } },
+          y: { grid: { color: "#f1f5f9", drawBorder: false }, ticks: { color: "#94a3b8" }, beginAtZero: true },
+        },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: 'rgba(15, 23, 42, 0.9)',
+            titleFont: { family: 'Inter', size: 13 },
+            bodyFont: { family: 'Inter', size: 13, weight: 'bold' },
+            padding: 10, cornerRadius: 8, displayColors: false
+          }
+        },
+      },
+    });
+    updateChartTheme();
+
     fetchHistory();
+    setInterval(fetchHistory, 300000);
   });
 })();
 </script>
 </body>
 </html>`;
+
+export function renderIndex() {
+  return INDEX_HTML;
 }

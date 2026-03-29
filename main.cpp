@@ -11,6 +11,11 @@ constexpr const char *WIFI_PASSWORD = "no"; // wifi pass
 constexpr const char *API_URL =
     "https://rad.changeme.workers.dev/ingest"; // <-- change changeme
 constexpr const char *DEVICE_TOKEN = "xxx";    // secret
+constexpr const char *OTA_HOSTNAME = "RADdevice";
+constexpr const char *OTA_PASSWORD = "OTAupdate";
+
+// TLS fingerprint for MITM protection (SHA-1)
+constexpr const char *TLS_FINGERPRINT = "";
 
 constexpr uint8_t GEIGER_PIN = D5;
 constexpr unsigned long SEND_INTERVAL_MS = 300000;
@@ -41,8 +46,8 @@ void setup() {
   Serial.println("Connected!");
   configTime(0, 0, "pool.ntp.org");
   Serial.println("time set");
-  ArduinoOTA.setHostname("RADdevice");
-  ArduinoOTA.setPassword("OTAupdate");
+  ArduinoOTA.setHostname(OTA_HOSTNAME);
+  ArduinoOTA.setPassword(OTA_PASSWORD);
 
   ArduinoOTA.onStart([]() { Serial.println("Start updating..."); });
   ArduinoOTA.onEnd([]() { Serial.println("\nUpdate complete!"); });
@@ -99,7 +104,11 @@ bool sendData(unsigned long pulseCount) {
   }
 
   WiFiClientSecure client;
-  client.setInsecure();
+  if (strlen(TLS_FINGERPRINT) > 0) {
+    client.setFingerprint(TLS_FINGERPRINT);
+  } else {
+    client.setInsecure();
+  }
   HTTPClient http;
 
   if (!http.begin(client, API_URL)) {
