@@ -453,75 +453,30 @@ const INDEX_HTML = `<!DOCTYPE html>
   let notifOn = localStorage.getItem("notifications_enabled") === "true";
   let currentLang = "pl";
   
-  const ctx = document.getElementById("chart").getContext("2d");
+  // Declared here so fetchLatest/fetchHistory can reference them; initialised
+  // inside DOMContentLoaded where layout is stable and deferred Chart.js has run.
+  let ctx = null;
+  let chart = null;
   const offlineEl = document.getElementById("offline");
 
-  // Init Theme
+  // Init theme ASAP (before DOMContentLoaded) to prevent flash of wrong theme.
   if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
     document.documentElement.classList.add('dark');
   }
 
   const updateChartTheme = () => {
-    if (typeof chart === 'undefined') return;
+    if (!chart) return;
+    // Batch reads before any writes.
     const isDark = document.documentElement.classList.contains("dark");
-    chart.options.scales.y.grid.color = isDark ? "#334155" : "#f1f5f9";
-    chart.options.plugins.tooltip.backgroundColor = isDark ? 'rgba(30, 41, 59, 0.9)' : 'rgba(15, 23, 42, 0.9)';
-    chart.update();
+    const gridColor  = isDark ? "#334155" : "#f1f5f9";
+    const tooltipBg  = isDark ? 'rgba(30, 41, 59, 0.9)' : 'rgba(15, 23, 42, 0.9)';
+    // Defer the chart render to the next frame — no forced reflow after DOM writes.
+    requestAnimationFrame(() => {
+      chart.options.scales.y.grid.color = gridColor;
+      chart.options.plugins.tooltip.backgroundColor = tooltipBg;
+      chart.update('none');
+    });
   };
-
-  // Create awesome gradient fill for the chart line
-  const gradient = ctx.createLinearGradient(0, 0, 0, 300);
-  gradient.addColorStop(0, 'rgba(37, 99, 235, 0.2)'); // var(--accent)
-  gradient.addColorStop(1, 'rgba(37, 99, 235, 0)');
-
-  const chart = new Chart(ctx, {
-    type: "line",
-    data: {
-      labels: [],
-      datasets: [
-        {
-          label: "µSv/h",
-          data: [],
-          borderColor: "#2563eb",
-          backgroundColor: gradient,
-          borderWidth: 2,
-          pointRadius: 0, // hide dots for cleaner look, show on hover
-          pointHoverRadius: 4,
-          tension: 0.4, // smooth bezier curves!
-          fill: true,
-        },
-      ],
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      interaction: { mode: 'index', intersect: false },
-      scales: {
-        x: { 
-          grid: { display: false, drawBorder: false },
-          ticks: { color: "#94a3b8", maxTicksLimit: 8 }
-        },
-        y: { 
-          grid: { color: "#f1f5f9", drawBorder: false },
-          ticks: { color: "#94a3b8" },
-          beginAtZero: true 
-        },
-      },
-      plugins: { 
-        legend: { display: false },
-        tooltip: {
-          backgroundColor: 'rgba(15, 23, 42, 0.9)',
-          titleFont: { family: 'Inter', size: 13 },
-          bodyFont: { family: 'Inter', size: 13, weight: 'bold' },
-          padding: 10,
-          cornerRadius: 8,
-          displayColors: false
-        }
-      },
-    },
-  });
-
-  updateChartTheme();
 
   const translations = {
     pl: {
@@ -661,35 +616,40 @@ const INDEX_HTML = `<!DOCTYPE html>
     try {
       const r = await fetch("/latest");
       const d = await r.json();
-      
-      const instantEl = document.getElementById("instant");
-      const avgEl = document.getElementById("avg");
-      const cpmEl = document.getElementById("cpm");
-      
-      // Color Logic
+
+      // --- Batch all DOM reads first (prevents forced reflow) ---
+      const instantEl   = document.getElementById("instant");
+      const avgEl       = document.getElementById("avg");
+      const cpmEl       = document.getElementById("cpm");
+      const isDark      = document.documentElement.classList.contains("dark");
       const instantColor = getColor(d.instant_usv);
+      const borderColor  = (d.instant_usv <= 0.3) ? (isDark ? "#3b82f6" : "#2563eb") : instantColor;
+
+      // --- Batch all DOM writes ---
       instantEl.style.color = instantColor;
-
-      // Animate Numbers beautifully
       animateValue(instantEl, lastInstant, d.instant_usv, 800);
-      animateValue(avgEl, lastAvg, d.avg_usv, 800);
-      animateValue(cpmEl, lastCpm, d.cpm, 800);
-      
-      lastInstant = d.instant_usv;
-      lastAvg = d.avg_usv;
-      lastCpm = d.cpm;
+      animateValue(avgEl,     lastAvg,     d.avg_usv,     800);
+      animateValue(cpmEl,     lastCpm,     d.cpm,         800);
 
-      // Chart line color matches danger level, defaults to accent blue if safe
-      const isDark = document.documentElement.classList.contains("dark");
-      chart.data.datasets[0].borderColor = (d.instant_usv <= 0.3) ? (isDark ? "#3b82f6" : "#2563eb") : instantColor;
-      chart.update();
+      lastInstant = d.instant_usv;
+      lastAvg     = d.avg_usv;
+      lastCpm     = d.cpm;
 
       if (d.offline) {
-        offlineEl.style.display = "flex";
         const t = translations[currentLang] || translations["pl"];
+        offlineEl.style.display = "flex";
         offlineEl.innerHTML = "⚠️ " + t.offline + " " + formatAgo(d.lastSeenAgo);
       } else {
         offlineEl.style.display = "none";
+      }
+
+      // Defer chart update to next animation frame — avoids forced reflow
+      // after the style writes above invalidated the layout.
+      if (chart) {
+        requestAnimationFrame(() => {
+          chart.data.datasets[0].borderColor = borderColor;
+          chart.update('none');
+        });
       }
 
       if (notifOn && d.instant_usv > 0.5) {
@@ -703,26 +663,33 @@ const INDEX_HTML = `<!DOCTYPE html>
   };
 
   const fetchHistory = async () => {
+    if (!chart) return;
     try {
       const w = document.getElementById("range").value;
       const r = await fetch("/history?window=" + w);
       const d = await r.json();
-      const points = d.data.map((row) => ({
-        x: new Date(row.ts),
-        y: row.usv,
-      }));
+
+      // Pre-compute labels and data entirely in JS — no DOM reads involved.
       const isMultiDay = w.includes('day');
-      chart.data.labels = points.map((p) => {
+      const labels = d.data.map((row) => {
+        const t = new Date(row.ts);
         if (w === '70day' || w === '140day') {
-          return p.x.toLocaleDateString([], {year: 'numeric', month: 'short', day: 'numeric'});
+          return t.toLocaleDateString([], {year: 'numeric', month: 'short', day: 'numeric'});
         }
         if (isMultiDay) {
-          return p.x.toLocaleString([], {month: 'numeric', day: 'numeric', hour: '2-digit', minute:'2-digit'});
+          return t.toLocaleString([], {month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit'});
         }
-        return p.x.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        return t.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
       });
-      chart.data.datasets[0].data = points.map((p) => p.y);
-      chart.update();
+      const chartData = d.data.map((row) => row.usv);
+
+      // Write to chart + update atomically inside a single RAF — no interleaved
+      // layout reads between a DOM write and chart.update().
+      requestAnimationFrame(() => {
+        chart.data.labels = labels;
+        chart.data.datasets[0].data = chartData;
+        chart.update();
+      });
     } catch (e) {
       console.error("Failed to fetch history:", e);
     }
@@ -756,6 +723,60 @@ const INDEX_HTML = `<!DOCTYPE html>
   };
 
   document.addEventListener("DOMContentLoaded", () => {
+    // Initialise chart here: layout is stable and deferred Chart.js has run.
+    ctx = document.getElementById("chart").getContext("2d");
+    const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+    gradient.addColorStop(0, 'rgba(37, 99, 235, 0.2)');
+    gradient.addColorStop(1, 'rgba(37, 99, 235, 0)');
+
+    chart = new Chart(ctx, {
+      type: "line",
+      data: {
+        labels: [],
+        datasets: [
+          {
+            label: "µSv/h",
+            data: [],
+            borderColor: "#2563eb",
+            backgroundColor: gradient,
+            borderWidth: 2,
+            pointRadius: 0,
+            pointHoverRadius: 4,
+            tension: 0.4,
+            fill: true,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
+        scales: {
+          x: {
+            grid: { display: false, drawBorder: false },
+            ticks: { color: "#94a3b8", maxTicksLimit: 8 }
+          },
+          y: {
+            grid: { color: "#f1f5f9", drawBorder: false },
+            ticks: { color: "#94a3b8" },
+            beginAtZero: true
+          },
+        },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: 'rgba(15, 23, 42, 0.9)',
+            titleFont: { family: 'Inter', size: 13 },
+            bodyFont: { family: 'Inter', size: 13, weight: 'bold' },
+            padding: 10,
+            cornerRadius: 8,
+            displayColors: false
+          }
+        },
+      },
+    });
+    updateChartTheme();
+
     // Detect & Apply language
     const savedLang = localStorage.getItem("preferred_lang");
     if (savedLang && translations[savedLang]) {
