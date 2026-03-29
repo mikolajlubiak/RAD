@@ -266,11 +266,14 @@ export function renderIndex() {
       <h2 class="chart-title" data-i18n="trendLabel">Trend Zmian</h2>
       <select id="range">
         <option value="1hr" selected data-i18n="range1h">Ostatnia 1 godzina</option>
-        <option value="10hr" data-i18n="range10h">Ostatnie 10 godzin</option>
-        <option value="10day" data-i18n="range10d">Ostatnie 10 dni</option>
-        <option value="50day" data-i18n="range50d">Ostatnie 50 dni</option>
-        <option value="180day" data-i18n="range180d">Ostatnie 180 dni</option>
-        <option value="1year" data-i18n="range1y">Ostatni rok</option>
+        <option value="12hr" data-i18n="range12h">Ostatnie 12 godzin</option>
+        <option value="1day" data-i18n="range1d">Ostatnia 1 doba</option>
+        <option value="3day" data-i18n="range3d">Ostatnie 3 dni</option>
+        <option value="7day" data-i18n="range7d">Ostatnie 7 dni</option>
+        <option value="15day" data-i18n="range15d">Ostatnie 15 dni</option>
+        <option value="35day" data-i18n="range35d">Ostatnie 35 dni</option>
+        <option value="70day" data-i18n="range70d">Ostatnie 70 dni</option>
+        <option value="140day" data-i18n="range140d">Ostatnie 140 dni</option>
       </select>
     </div>
     <div class="chart-container">
@@ -405,11 +408,14 @@ export function renderIndex() {
       danger: "Niebezp. (>5)",
       trendLabel: "Trend Zmian",
       range1h: "Ostatnia 1 godzina",
-      range10h: "Ostatnie 10 godzin",
-      range10d: "Ostatnie 10 dni",
-      range50d: "Ostatnie 50 dni",
-      range180d: "Ostatnie 180 dni",
-      range1y: "Ostatni rok",
+      range12h: "Ostatnie 12 godzin",
+      range1d: "Ostatnia 1 doba",
+      range3d: "Ostatnie 3 dni",
+      range7d: "Ostatnie 7 dni",
+      range15d: "Ostatnie 15 dni",
+      range35d: "Ostatnie 35 dni",
+      range70d: "Ostatnie 70 dni",
+      range140d: "Ostatnie 140 dni",
       notifyOn: "🔔 Powiadomienia: Wł",
       notifyOff: "🔔 Powiadomienia: Wył",
       offline: "Brak łączności z bazą od",
@@ -445,11 +451,14 @@ export function renderIndex() {
       danger: "Danger (>5)",
       trendLabel: "Data Trends",
       range1h: "Last 1 hour",
-      range10h: "Last 10 hours",
-      range10d: "Last 10 days",
-      range50d: "Last 50 days",
-      range180d: "Last 180 days",
-      range1y: "Last 1 year",
+      range12h: "Last 12 hours",
+      range1d: "Last 24 hours",
+      range3d: "Last 3 days",
+      range7d: "Last 7 days",
+      range15d: "Last 15 days",
+      range35d: "Last 35 days",
+      range70d: "Last 70 days",
+      range140d: "Last 140 days",
       notifyOn: "🔔 Notify: On",
       notifyOff: "🔔 Notify: Off",
       offline: "Station offline for",
@@ -566,9 +575,9 @@ export function renderIndex() {
         x: new Date(row.ts),
         y: row.usv,
       }));
-      const isMultiDay = w.includes('day') || w === '1year';
+      const isMultiDay = w.includes('day');
       chart.data.labels = points.map((p) => {
-        if (w === '180day' || w === '1year') {
+        if (w === '70day' || w === '140day') {
           return p.x.toLocaleDateString([], {year: 'numeric', month: 'short', day: 'numeric'});
         }
         if (isMultiDay) {

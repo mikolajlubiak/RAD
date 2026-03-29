@@ -86,20 +86,25 @@ async function handleHistory(url, env) {
   const w = url.searchParams.get("window") || "1hr";
   const windows = {
     "1hr": 60 * 60e3,
-    "10hr": 10 * 3600e3,
-    "10day": 10 * 86400e3,
-    "50day": 50 * 86400e3,
-    "180day": 180 * 86400e3,
-    "1year": 365 * 86400e3,
+    "12hr": 12 * 3600e3,
+    "1day": 24 * 3600e3,
+    "3day": 3 * 86400e3,
+    "7day": 7 * 86400e3,
+    "15day": 15 * 86400e3,
+    "35day": 35 * 86400e3,
+    "70day": 70 * 86400e3,
+    "140day": 140 * 86400e3,
   };
   const ms = windows[w] || windows["1hr"];
   const since = Date.now() - ms;
 
   let bucketMs = 0;
-  if (w === "10day") bucketMs = 3600e3;
-  else if (w === "50day") bucketMs = 4 * 3600e3;
-  else if (w === "180day") bucketMs = 12 * 3600e3;
-  else if (w === "1year") bucketMs = 24 * 3600e3;
+  if (w === "3day") bucketMs = 15 * 60e3;
+  else if (w === "7day") bucketMs = 30 * 60e3;
+  else if (w === "15day") bucketMs = 3600e3;
+  else if (w === "35day") bucketMs = 3 * 3600e3;
+  else if (w === "70day") bucketMs = 6 * 3600e3;
+  else if (w === "140day") bucketMs = 12 * 3600e3;
 
   try {
     let query = "SELECT ts, clicks FROM readings WHERE ts >= ? ORDER BY ts ASC;";
@@ -116,9 +121,9 @@ async function handleHistory(url, env) {
     }));
 
     let maxAge = 60;
-    if (w === "10hr") maxAge = 300; // 5 mins
-    else if (w === "10day") maxAge = 1800; // 30 mins
-    else if (w === "50day" || w === "180day" || w === "1year") maxAge = 3600; // 1 hour cache explicitly for long datasets
+    if (w === "12hr" || w === "1day") maxAge = 300;
+    else if (w === "3day" || w === "7day") maxAge = 1800;
+    else if (w === "15day" || w === "35day" || w === "70day" || w === "140day") maxAge = 3600;
 
     return jsonResponse({ data }, 200, maxAge);
   } catch (e) {
