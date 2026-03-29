@@ -404,7 +404,7 @@ const INDEX_HTML = `<!DOCTYPE html>
       <p style="margin-bottom: 1.25rem;" data-i18n="partnerDesc">Wierzymy, że takie inicjatywy najlepiej działają przy wsparciu lokalnej społeczności i samorządu. Zapraszamy do kontaktu.</p>
       
       <div style="padding: 1rem 1.5rem; border: 1px solid var(--border); border-radius: 8px; background: var(--card); font-weight: 600; color: var(--text); display: inline-flex; align-items: center; justify-content: center; gap: 1rem; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05); text-align: left; line-height: 1.2;">
-        <div style="width: 40px; height: 48px; background: #fef08a; border: 2px solid #eab308; border-radius: 4px; display:flex; align-items:center; justify-content:center; color: #854d0e; font-size:10px; font-weight: bold; flex-shrink: 0;" title="Herb Ostrołęki" data-i18n="partnerHerb">HERB</div>
+        <div style="width: 64px; min-height: 48px; background: #fef08a; border: 2px solid #eab308; border-radius: 6px; display:flex; align-items:center; justify-content:center; text-align: center; color: #854d0e; font-size: 10px; font-weight: 800; flex-shrink: 0; line-height: 1.1; padding: 4px; box-sizing: border-box;" title="Herb Ostrołęki" data-i18n="partnerHerb">HERB</div>
         <div>
           <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.2rem;" data-i18n="partnerVis">Nasza wizja współpracy</div>
           <div style="font-size: 1rem;" data-i18n="partnerSupport">Projekt może być wspierany przez Urząd Miasta Ostrołęki</div>
