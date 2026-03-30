@@ -62,6 +62,7 @@ async function handleLatest(env) {
     totalClicks = query.results?.[0]?.s || 0;
   } catch (e) {
     console.error("D1 hourly aggregate query failed:", e);
+    return jsonResponse({ error: "Database query failed", details: e.message }, 500, "no-store");
   }
 
   const cfg = getConfig(env);

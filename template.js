@@ -595,9 +595,10 @@ const INDEX_HTML = `<!DOCTYPE html>
   let lastAvg = 0;
   let lastCpm = 0;
 
-  const fetchLatest = async () => {
+  const fetchLatest = async (retryCount = 0) => {
     try {
       const r = await fetch("/latest");
+      if (!r.ok) throw new Error("HTTP " + r.status);
       const d = await r.json();
 
       const instantEl   = document.getElementById("instant");
@@ -641,14 +642,20 @@ const INDEX_HTML = `<!DOCTYPE html>
       }
     } catch (e) {
       console.error("Failed to fetch latest:", e);
+      if (retryCount < 3) {
+        const delay = 2000 * (retryCount + 1);
+        console.warn('Retrying fetchLatest in ' + delay + 'ms...');
+        setTimeout(() => fetchLatest(retryCount + 1), delay);
+      }
     }
   };
 
-  const fetchHistory = async () => {
+  const fetchHistory = async (retryCount = 0) => {
     if (!chart) return;
     try {
       const w = document.getElementById("range").value;
       const r = await fetch("/history?window=" + w);
+      if (!r.ok) throw new Error("HTTP " + r.status);
       const d = await r.json();
 
       const isMultiDay = w.includes('day');
@@ -667,8 +674,6 @@ const INDEX_HTML = `<!DOCTYPE html>
       const avgUsv = chartData.length > 0 ? chartData.reduce((a, b) => a + b, 0) / chartData.length : 0;
       const avgEl = document.getElementById("avg");
       const t = translations[currentLang] || translations["pl"];
-      const rangeEl = document.getElementById("range");
-      const selectedOptionText = rangeEl.options[rangeEl.selectedIndex].textContent;
       
       // Update Average Value with animation
       animateValue(avgEl, lastAvg, avgUsv, 800);
@@ -689,6 +694,11 @@ const INDEX_HTML = `<!DOCTYPE html>
       });
     } catch (e) {
       console.error("Failed to fetch history:", e);
+      if (retryCount < 3) {
+        const delay = 2000 * (retryCount + 1);
+        console.warn('Retrying fetchHistory in ' + delay + 'ms...');
+        setTimeout(() => fetchHistory(retryCount + 1), delay);
+      }
     }
   };
 
