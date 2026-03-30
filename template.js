@@ -777,7 +777,7 @@ const INDEX_HTML = `<!DOCTYPE html>
     document.getElementById("range").addEventListener("change", fetchHistory);
 
     fetchLatest();
-    setInterval(fetchLatest, 30000);
+    setInterval(fetchLatest, 120000); // 2 minutes
 
     // Chart.js UMD build is already registered if we use the full bundle.
     if (typeof Chart === 'undefined') {
@@ -828,7 +828,7 @@ const INDEX_HTML = `<!DOCTYPE html>
     updateChartTheme();
 
     fetchHistory();
-    setInterval(fetchHistory, 300000);
+    setInterval(fetchHistory, 300000); // 5 minutes
   });
 })();
 </script>
