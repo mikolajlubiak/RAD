@@ -330,6 +330,7 @@ const INDEX_HTML = `<!DOCTYPE html>
       <button id="themeToggle" class="btn">🌙</button>
       <button id="notifToggle" class="btn">🔔 Powiadomienia: Wył</button>
       <button id="langToggle" class="btn">🌐 PL</button>
+      <button id="exportBtn" class="btn" title="CSV">💾</button>
     </div>
   </header>
 
@@ -702,6 +703,23 @@ const INDEX_HTML = `<!DOCTYPE html>
     }
   };
 
+  document.getElementById("exportBtn").addEventListener("click", async () => {
+  try {
+    const res = await fetch("/export");
+    const blob = await res.blob();
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "radiation_data_rad.icmt.cc.csv";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    window.URL.revokeObjectURL(url);
+  } catch (e) {
+    console.error("Export failed:", e);
+  }
+});
+
   const applyLang = (lang) => {
     const t = translations[lang] || translations["pl"];
     document.title = "OSMR - " + t.title;
@@ -828,7 +846,7 @@ const INDEX_HTML = `<!DOCTYPE html>
     updateChartTheme();
 
     fetchHistory();
-    setInterval(fetchHistory, 600000); // 10 minutes
+    setInterval(fetchHistory, 300000); // 5 minutes
   });
 })();
 </script>
