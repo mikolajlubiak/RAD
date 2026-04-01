@@ -113,25 +113,53 @@ async function handleLatest(env) {
 
 async function handleExport(env) {
   try {
-    const rows = await env.RAD_D1.prepare(
-      "SELECT ts, clicks FROM readings ORDER BY ts ASC;"
-    ).all();
-
     const cfg = getConfig(env);
+    const pageSize = 1000;
+    const encoder = new TextEncoder();
 
-    let csv = "timestamp,iso_time,clicks,usv\n";
+    const stream = new ReadableStream({
+      async start(controller) {
+        try {
+          controller.enqueue(encoder.encode("timestamp,iso_time,clicks,usv\n"));
 
-    for (const r of rows.results) {
-      const usv = (r.clicks / (cfg.intervalMs / 60000)) * cfg.cpmToUsv;
-      const iso = new Date(r.ts).toISOString();
+          let offset = 0;
+          while (true) {
+            const page = await env.RAD_D1.prepare(
+              "SELECT ts, clicks FROM readings ORDER BY ts ASC LIMIT ? OFFSET ?;"
+            ).bind(pageSize, offset).all();
 
-      csv += `${r.ts},${iso},${r.clicks},${usv}\n`;
-    }
+            const rows = page.results || [];
+            if (rows.length === 0) {
+              break;
+            }
 
-    return new Response(csv, {
+            let chunk = "";
+            for (const r of rows) {
+              const usv = (r.clicks / (cfg.intervalMs / 60000)) * cfg.cpmToUsv;
+              const iso = new Date(r.ts).toISOString();
+              chunk += `${r.ts},${iso},${r.clicks},${usv}\n`;
+            }
+
+            controller.enqueue(encoder.encode(chunk));
+            offset += rows.length;
+
+            if (rows.length < pageSize) {
+              break;
+            }
+          }
+
+          controller.close();
+        } catch (error) {
+          controller.error(error);
+        }
+      }
+    });
+
+    return new Response(stream, {
       headers: {
-        "Content-Type": "text/csv",
+        "Content-Type": "text/csv; charset=utf-8",
         "Content-Disposition": `attachment; filename="radiation_data_rad.icmt.cc.csv"`,
+        "Cache-Control": "no-store"
       },
     });
 
