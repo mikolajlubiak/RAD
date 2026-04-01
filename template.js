@@ -6,7 +6,7 @@ const INDEX_HTML = `<!DOCTYPE html>
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://*.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://rad.icmt.cc https://*.cloudflareinsights.com; img-src 'self' data: https://icmt.cc;">
 <title>OSMR - Ostrołęcki System Monitorowania Radiacyjnego</title>
 <meta name="description" content="OSMR - niezależna stacja pomiarowa promieniowania jonizującego w Ostrołęce. Dane na żywo, wykresy historyczne i alerty.">
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%232563eb'/%3E%3Ctext x='32' y='42' text-anchor='middle' font-size='28' font-family='Arial' fill='white'%3ER%3C/text%3E%3C/svg%3E" />
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23facc15'/%3E%3Ctext x='32' y='44' text-anchor='middle' font-size='34' font-family='Arial' fill='%230f172a'%3E%E2%98%A2%3C/text%3E%3C/svg%3E" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://cdn.jsdelivr.net">
@@ -149,6 +149,19 @@ const INDEX_HTML = `<!DOCTYPE html>
   .kpi-value { font-size: 2.75rem; font-weight: 800; color: var(--accent); letter-spacing: -0.02em; line-height: 1; transition: color 0.4s ease; }
   .kpi-unit { font-size: 1rem; font-weight: 600; color: var(--text-muted); }
   .kpi-meta { font-size: 0.85rem; color: var(--text-muted); margin-top: 0.5rem; display: flex; align-items: center; gap: 0.25rem;}
+  .radiation-icon {
+    width: 1.05rem;
+    height: 1.05rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    background: #facc15;
+    color: #0f172a;
+    font-size: 0.75rem;
+    line-height: 1;
+    font-weight: 700;
+  }
 
   .status-legend { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem; margin-top: 1rem; }
   .badge {
@@ -345,7 +358,7 @@ const INDEX_HTML = `<!DOCTYPE html>
         <div class="kpi-unit">µSv/h</div>
       </div>
       <div class="kpi-meta">
-        <span>☢</span>
+        <span class="radiation-icon" aria-hidden="true">☢</span>
         <span data-i18n="cpmLabel">CPM:</span> <strong id="cpm">--</strong>
       </div>
     </div>
