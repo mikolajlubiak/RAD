@@ -7,3 +7,6 @@ CREATE TABLE IF NOT EXISTS readings (
 
 -- Index for faster time-range queries
 CREATE INDEX IF NOT EXISTS idx_readings_ts ON readings(ts);
+
+-- Ensures timestamp-based upserts are deterministic and deduplicated
+CREATE UNIQUE INDEX IF NOT EXISTS idx_readings_ts_unique ON readings(ts);
