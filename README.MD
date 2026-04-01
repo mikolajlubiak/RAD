@@ -6,7 +6,15 @@
 
 # How to Start:
 
-* Initialize the database: Run `npm run db:init` to create/update local tables and indexes.
-* Sync live data: Run `npm run db:seed` to fetch the latest readings from [rad.icmt.cc](https://rad.icmt.cc/).
-* Start the server: Run `npm run dev` to launch the local worker.
+* Deterministic local setup (recommended for dev and AI-agent testing):
+	* Run `npm run verify:local`.
+	* This resets local state, initializes D1, seeds fixture data, and checks JS syntax.
+* Start local server: Run `npm run dev`.
+* Optional parity check against Cloudflare runtime: Run `npm run dev:remote`.
+* Optional live-data seed (non-deterministic): Run `npm run db:seed:live` to fetch latest readings from [rad.icmt.cc](https://rad.icmt.cc/).
 * View the site: Open [http://localhost:8787](http://localhost:8787).
+
+# Workflow Notes
+
+* `npm run db:seed` now uses deterministic fixture data by default.
+* Use `npm run db:seed:live` only when you want to test against current production-like data.

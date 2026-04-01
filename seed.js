@@ -5,7 +5,10 @@ import path from 'path';
 const LATEST_URL = 'https://rad.icmt.cc/latest';
 // Fetching the largest possible window (140 days)
 const HISTORY_URL = 'https://rad.icmt.cc/history?window=140day';
+const FINE_HISTORY_URL = 'https://rad.icmt.cc/history?window=1day';
 const BATCH_SIZE = 500;
+const DEFAULT_SEED_MODE = 'fixture';
+const FIXTURE_PATH = path.join(process.cwd(), 'fixtures', 'seed-fixture.json');
 
 async function fetchJsonOrThrow(url) {
   const response = await fetch(url);
@@ -44,8 +47,45 @@ function buildUpsertSqlScript(sqlTuples) {
     .join('\n');
 }
 
+function parseSeedMode() {
+  const fromArg = process.argv.find((arg) => arg.startsWith('--mode='));
+  const mode = (fromArg ? fromArg.split('=')[1] : process.env.SEED_MODE || DEFAULT_SEED_MODE).toLowerCase();
+  if (mode !== 'fixture' && mode !== 'live') {
+    throw new Error(`Unsupported seed mode: ${mode}. Use fixture or live.`);
+  }
+  return mode;
+}
+
+function loadFixtureData() {
+  if (!fs.existsSync(FIXTURE_PATH)) {
+    throw new Error(`Fixture file not found: ${FIXTURE_PATH}`);
+  }
+
+  const raw = fs.readFileSync(FIXTURE_PATH, 'utf8');
+  const parsed = JSON.parse(raw);
+  if (!parsed?.latest || !parsed?.history140?.data || !parsed?.history1day?.data) {
+    throw new Error('Invalid fixture format. Expected latest, history140.data and history1day.data.');
+  }
+
+  return {
+    latestData: { latest: parsed.latest },
+    historyData: parsed.history140,
+    fineHistoryData: parsed.history1day,
+  };
+}
+
+async function loadLiveData() {
+  const latestData = await fetchJsonOrThrow(LATEST_URL);
+  const historyData = await fetchJsonOrThrow(HISTORY_URL);
+  const fineHistoryData = await fetchJsonOrThrow(FINE_HISTORY_URL);
+
+  return { latestData, historyData, fineHistoryData };
+}
+
 async function seed() {
+  const mode = parseSeedMode();
   console.log('Reading config...');
+  console.log(`Seed mode: ${mode}`);
   const intervalMs = 300000;
   const cpmToUsv = 0.0018;
   const intervalMins = intervalMs / 60000;
@@ -58,8 +98,11 @@ async function seed() {
     console.log('Notice: Could not clear D1 (might be empty or not initialized yet).');
   }
 
-  console.log('Fetching latest data from production...');
-  const latestData = await fetchJsonOrThrow(LATEST_URL);
+  const sourceLabel = mode === 'live' ? 'production' : 'fixture';
+  console.log(`Loading seed data from ${sourceLabel} source...`);
+  const { latestData, historyData, fineHistoryData } = mode === 'live'
+    ? await loadLiveData()
+    : loadFixtureData();
 
   if (latestData.latest) {
     console.log('Seeding KV "latest" key...');
@@ -67,8 +110,7 @@ async function seed() {
     execFileSync('npx', ['wrangler', 'kv', 'key', 'put', 'latest', kvValue, '--binding', 'RAD_KV', '--local'], { stdio: 'inherit' });
   }
 
-  console.log('Fetching maximum historical data from production (140 days)...');
-  const historyData = await fetchJsonOrThrow(HISTORY_URL);
+  console.log('Applying historical seed set...');
 
   if (historyData.data && historyData.data.length > 0) {
     console.log(`Preparing to seed D1 with ${historyData.data.length} historical records...`);
@@ -91,9 +133,8 @@ async function seed() {
     }
   }
 
-  // Also fetch the last 24h for fine-grained data (no buckets)
-  console.log('Fetching fine-grained data for the last 24h...');
-  const fineHistoryData = await fetchJsonOrThrow('https://rad.icmt.cc/history?window=1day');
+  // Apply fine-grained data set for short-window chart behavior
+  console.log('Applying fine-grained seed set...');
 
   if (fineHistoryData.data && fineHistoryData.data.length > 0) {
     console.log(`Seeding D1 with ${fineHistoryData.data.length} fine-grained records...`);
