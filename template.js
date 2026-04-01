@@ -6,7 +6,7 @@ const INDEX_HTML = `<!DOCTYPE html>
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://*.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://rad.icmt.cc https://*.cloudflareinsights.com; img-src 'self' data: https://icmt.cc;">
 <title>OSMR - Ostrołęcki System Monitorowania Radiacyjnego</title>
 <meta name="description" content="OSMR - niezależna stacja pomiarowa promieniowania jonizującego w Ostrołęce. Dane na żywo, wykresy historyczne i alerty.">
-<link rel="icon" type="image/webp" href="https://icmt.cc/p/rad-the-local-radiaton-website/favicon.webp" />
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%232563eb'/%3E%3Ctext x='32' y='42' text-anchor='middle' font-size='28' font-family='Arial' fill='white'%3ER%3C/text%3E%3C/svg%3E" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://cdn.jsdelivr.net">
@@ -597,11 +597,38 @@ const INDEX_HTML = `<!DOCTYPE html>
   let lastAvg = 0;
   let lastCpm = 0;
 
+  const fetchJsonWithTimeout = async (url, options = {}, timeoutMs = 10000) => {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), timeoutMs);
+
+    try {
+      const response = await fetch(url, {
+        ...options,
+        signal: controller.signal,
+      });
+
+      if (!response.ok) {
+        throw new Error("HTTP " + response.status);
+      }
+
+      return await response.json();
+    } finally {
+      clearTimeout(timeout);
+    }
+  };
+
   const fetchLatest = async (retryCount = 0) => {
     try {
-      const r = await fetch("/latest");
-      if (!r.ok) throw new Error("HTTP " + r.status);
-      const d = await r.json();
+      const d = await fetchJsonWithTimeout("/latest?_=" + Date.now(), {
+        cache: "no-store",
+        headers: {
+          "Cache-Control": "no-cache"
+        }
+      }, 8000);
+
+      if (!Number.isFinite(Number(d.instant_usv)) || !Number.isFinite(Number(d.avg_usv)) || !Number.isFinite(Number(d.cpm))) {
+        throw new Error("Invalid latest payload");
+      }
 
       const instantEl   = document.getElementById("instant");
       const avgEl       = document.getElementById("avg");
@@ -656,9 +683,13 @@ const INDEX_HTML = `<!DOCTYPE html>
     if (!chart) return;
     try {
       const w = document.getElementById("range").value;
-      const r = await fetch("/history?window=" + w);
-      if (!r.ok) throw new Error("HTTP " + r.status);
-      const d = await r.json();
+      const d = await fetchJsonWithTimeout("/history?window=" + w, {
+        cache: "force-cache"
+      }, 12000);
+
+      if (!d || !Array.isArray(d.data)) {
+        throw new Error("Invalid history payload");
+      }
 
       const isMultiDay = w.includes('day');
       const labels = d.data.map((row) => {
