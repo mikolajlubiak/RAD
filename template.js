@@ -441,6 +441,7 @@ const INDEX_HTML = `<!DOCTYPE html>
 
   let notifOn = localStorage.getItem("notifications_enabled") === "true";
   let currentLang = "pl";
+  const notificationsSupported = (typeof Notification !== "undefined");
   
   let ctx = null;
   let chart = null;
@@ -636,7 +637,7 @@ const INDEX_HTML = `<!DOCTYPE html>
         });
       }
 
-      if (notifOn && d.instant_usv > 0.5) {
+      if (notifOn && notificationsSupported && Notification.permission === "granted" && d.instant_usv > 0.5) {
         new Notification("Radiation Alert", {
           body: d.instant_usv.toFixed(3) + " µSv/h",
         });
@@ -761,6 +762,10 @@ const INDEX_HTML = `<!DOCTYPE html>
       }
     }
     applyLang(currentLang);
+    if (!notificationsSupported) {
+      notifOn = false;
+      localStorage.setItem("notifications_enabled", "false");
+    }
     document.getElementById("notifToggle").classList.toggle("active", notifOn);
 
     document.getElementById("themeToggle").addEventListener("click", () => {
@@ -781,6 +786,9 @@ const INDEX_HTML = `<!DOCTYPE html>
     });
 
     document.getElementById("notifToggle").addEventListener("click", async (e) => {
+      if (!notificationsSupported) {
+        return;
+      }
       if (!notifOn) {
         const permission = await Notification.requestPermission();
         if (permission !== "granted") return;
