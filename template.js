@@ -161,6 +161,7 @@ const INDEX_HTML = `<!DOCTYPE html>
     font-size: 0.75rem;
     line-height: 1;
     font-weight: 700;
+    transition: background-color 0.35s ease, color 0.35s ease;
   }
 
   .status-legend { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem; margin-top: 1rem; }
@@ -358,7 +359,7 @@ const INDEX_HTML = `<!DOCTYPE html>
         <div class="kpi-unit">µSv/h</div>
       </div>
       <div class="kpi-meta">
-        <span class="radiation-icon" aria-hidden="true">☢</span>
+        <span id="radiationIcon" class="radiation-icon" aria-hidden="true">☢</span>
         <span data-i18n="cpmLabel">CPM:</span> <strong id="cpm">--</strong>
       </div>
     </div>
@@ -590,6 +591,11 @@ const INDEX_HTML = `<!DOCTYPE html>
     return "var(--status-danger)";
   };
 
+  const getRadiationIconTextColor = (usv) => {
+    if (usv <= 1) return "#0f172a";
+    return "#ffffff";
+  };
+
   const animateValue = (obj, start, end, duration) => {
     let startTimestamp = null;
     const step = (timestamp) => {
@@ -649,8 +655,13 @@ const INDEX_HTML = `<!DOCTYPE html>
       const isDark      = document.documentElement.classList.contains("dark");
       const instantColor = getColor(d.instant_usv);
       const borderColor  = (d.instant_usv <= 0.3) ? (isDark ? "#3b82f6" : "#2563eb") : instantColor;
+      const iconEl = document.getElementById("radiationIcon");
 
       instantEl.style.color = instantColor;
+      if (iconEl) {
+        iconEl.style.backgroundColor = instantColor;
+        iconEl.style.color = getRadiationIconTextColor(d.instant_usv);
+      }
       animateValue(instantEl, lastInstant, d.instant_usv, 800);
       lastInstant = d.instant_usv;
 
